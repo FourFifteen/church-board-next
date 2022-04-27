@@ -1,24 +1,31 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase } from "firebase/database"
+import firebaseAuth from "firebase/auth";
+import firebaseDatabase from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAMMPOhXASdj_apdpEr7vXWNdEIr2ZLPh4",
-  authDomain: "church-board-4ff13.firebaseapp.com",
-  databaseURL: "https://church-board-4ff13-default-rtdb.firebaseio.com",
-  projectId: "church-board-4ff13",
-  storageBucket: "church-board-4ff13.appspot.com",
-  messagingSenderId: "230773429799",
-  appId: "1:230773429799:web:25b67a4868d7d0eaa62002",
-  measurementId: "G-ECES2DECP0"
+const config = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const database = getDatabase();
+const app = initializeApp(config);
+const database = firebaseDatabase.getDatabase(app)
+const auth = firebaseAuth.getAuth(app)
+
+const firebase = {
+  database,
+  auth,
+  app,
+  config
+}
+export default firebase
