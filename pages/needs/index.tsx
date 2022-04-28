@@ -1,7 +1,9 @@
 import { Box, Button, Input, List, ListItem, Spinner, Text, Textarea } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-// import useSwr from 'swr'
 import { Need } from '../../types/entities/Need'
+import { useObject } from 'react-firebase-hooks/database'
+import { ref } from 'firebase/database'
+import firebase from '../../firebase/client'
 
 type Props = {
   userId: string
@@ -15,28 +17,15 @@ type Props = {
 
 export default function NeedsPage({ userId, churchId }: Props) {
   const [showAddModal, setShowAddModal] = useState(false)
-  // const { data, error } = useSwr('/api/needs', fetcher)
-  const data = [{
-    name: "Need a Lawnmower",
-    description: "My lawnmower broke and I ned to borrow one from someone",
-    fulfilledState: "Unfulfilled",
-    ownerId: "1",
-    churchId: "1",
-    assigneeId: "1",
-    id: "12134532"
-  }]
-  const error = null
+  const needsRef = ref(firebase.database, 'needs/')
+  const [snapshot, loading, error] = useObject(needsRef)
+  const data: Need[] | null = snapshot?.val()
+  console.log(data)
 
-  if (!data) {
+  if (loading) {
     return (
       <main>
         <Spinner />
-      </main>
-    )
-  }
-  if (data && !data.length) {
-    return (
-      <main>
       </main>
     )
   }
@@ -47,12 +36,10 @@ export default function NeedsPage({ userId, churchId }: Props) {
       </main>
     )
   }
-  console.log(data)
-  console.log(error)
   return (
     <main>
       <div>
-        {!data.length
+        {!data
           ? (
             <>
               <p>No needs found yet. Want to add your first one?</p>
@@ -60,7 +47,10 @@ export default function NeedsPage({ userId, churchId }: Props) {
             </>
           )
           : (
-            <List>
+            <>
+              <List>
+                <ListItem>{JSON.stringify(data)}</ListItem>
+                {/*
               {data.map(({ name, description, fulfilledState, assigneeId, id }, index) => (
                 <ListItem key={`${index}-${id.slice(-4)}`}>
                   <p>{name}</p>
@@ -69,10 +59,12 @@ export default function NeedsPage({ userId, churchId }: Props) {
                   <p>{assigneeId}</p>
                 </ListItem>
               ))}
-            </List>
+            */}
+              </List>
+              <Button onClick={() => setShowAddModal(true)}>Add</Button>
+            </>
           )}
       </div>
-      <Button onClick={() => setShowAddModal(true)}>Add</Button>
       {showAddModal && (
         <AddNeedModal churchId={churchId} userId={userId} setShowAddModal={setShowAddModal} />
       )}
@@ -108,11 +100,12 @@ const AddNeedModal: React.FC<AddModalProps> = ({ userId, churchId, setShowAddMod
           ownerId: userId
         })
       })
-      const need: Need = await response.json()
-      setCreatedNeed(need)
+      const data = await response.json()
+      setCreatedNeed(data.need)
     }
 
     post()
+
   }, [name, description, churchId, userId, submitting])
 
   useEffect(() => {

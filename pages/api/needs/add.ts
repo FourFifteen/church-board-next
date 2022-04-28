@@ -1,5 +1,5 @@
 import { ref, set } from 'firebase/database'
-import firebase from '../../../firebase'
+import firebase from '../../../firebase/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { v4 as uuid } from 'uuid'
 import { Need, NeedData } from '../../../types/entities/Need'
@@ -19,6 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   await set(ref(firebase.database, 'needs/' + need.id), needData)
-  res.status(200).json({ message: "error setting data in db", data: need })
+  res.status(200).json({ data: need })
 
 }
