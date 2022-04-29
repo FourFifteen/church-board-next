@@ -1,7 +1,7 @@
 export type User = {
   name: string
-  churchId: string
-  id: string
+  email: string | null
+  id: string | number
 }
 
 export interface Admin extends User {

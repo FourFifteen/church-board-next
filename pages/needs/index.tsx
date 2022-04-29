@@ -1,9 +1,9 @@
 import { Box, Button, Center, Container, Input, List, ListItem, Spinner, Text, Textarea } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Need } from '../../types/entities/Need'
 import { useList } from 'react-firebase-hooks/database'
-import { ref } from 'firebase/database'
-import firebase from '../../firebase/client'
+import { FirebaseDocDatabaseService } from '../../adapters/firebase-database'
+import { TableRefs } from '../../services/database'
 
 type Props = {
   userId: string
@@ -12,9 +12,13 @@ type Props = {
 
 export default function NeedsPage({ userId, churchId }: Props) {
   const [showAddModal, setShowAddModal] = useState(false)
-  const needsRef = ref(firebase.database, 'needs')
-  const [snapshots, loading, error] = useList(needsRef)
+  const needsRef = useRef<TableRefs | null>(null)
+  const [snapshots, loading, error] = useList(needsRef.current)
 
+  useEffect(() => {
+    FirebaseDocDatabaseService.init()
+    needsRef.current = FirebaseDocDatabaseService.getTableRef('needs')
+  }, [])
   const renderAddState = (text?: string) => {
     return (
       <>
