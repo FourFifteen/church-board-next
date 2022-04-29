@@ -1,7 +1,7 @@
-import { Box, Button, Input, List, ListItem, Spinner, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Input, List, ListItem, Spinner, Text, Textarea } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { Need } from '../../types/entities/Need'
-import { useObject } from 'react-firebase-hooks/database'
+import { useList } from 'react-firebase-hooks/database'
 import { ref } from 'firebase/database'
 import firebase from '../../firebase/client'
 
@@ -10,65 +10,56 @@ type Props = {
   churchId: string
 }
 
-// const fetcher = async (url: string): Promise<Array<Need>> => {
-//   const response = await fetch(url)
-//   return await response.json()
-// }
-
 export default function NeedsPage({ userId, churchId }: Props) {
   const [showAddModal, setShowAddModal] = useState(false)
-  const needsRef = ref(firebase.database, 'needs/')
-  const [snapshot, loading, error] = useObject(needsRef)
-  const data: Need[] | null = snapshot?.val()
-  console.log(data)
+  const needsRef = ref(firebase.database, 'needs')
+  const [snapshots, loading, error] = useList(needsRef)
 
-  if (loading) {
+  const renderAddState = (text?: string) => {
     return (
-      <main>
-        <Spinner />
-      </main>
+      <>
+        {text && <Text>{text}</Text>}
+        <Button onClick={() => setShowAddModal(true)}>Add</Button>
+      </>
     )
   }
-  if (error) {
-    return (
-      <main>
-        <p>Encountered an error loading the Needs data. Sorry!</p>
-      </main>
-    )
-  }
+
   return (
-    <main>
-      <div>
-        {!data
-          ? (
-            <>
-              <p>No needs found yet. Want to add your first one?</p>
-              <Button onClick={() => setShowAddModal(true)}>Add</Button>
-            </>
-          )
-          : (
-            <>
-              <List>
-                <ListItem>{JSON.stringify(data)}</ListItem>
-                {/*
-              {data.map(({ name, description, fulfilledState, assigneeId, id }, index) => (
-                <ListItem key={`${index}-${id.slice(-4)}`}>
-                  <p>{name}</p>
-                  <p>{description}</p>
-                  <p>{fulfilledState}</p>
-                  <p>{assigneeId}</p>
-                </ListItem>
-              ))}
-            */}
-              </List>
-              <Button onClick={() => setShowAddModal(true)}>Add</Button>
-            </>
-          )}
-      </div>
+    <Container>
+      {loading && <Center><Spinner /></Center>}
+      {error && <Center><Text>Encountered an error loading the Needs data. Sorry!</Text></Center>}
+      <Box>
+        {/* We are: -Loading, -Have no valid db reference, -Have a valid reference with no data */}
+        {(!snapshots || snapshots && !snapshots.length) && !loading &&
+          renderAddState("Looks like no needs have been added. Add your first one now!")
+        }
+        {snapshots && snapshots.length && (
+          <>
+            {renderAddState()}
+            <List>
+              {snapshots.map((snapshot) => {
+                if (!snapshot) {
+                  return null
+                }
+                const { name, description, fulfilledState, assigneeId } = snapshot.val()
+                return (
+                  <ListItem key={snapshot.key}>
+                    <Text>{name}</Text>
+                    <Text>{description}</Text>
+                    <Text>{fulfilledState}</Text>
+                    <Text>{assigneeId}</Text>
+                  </ListItem>
+                )
+              }
+              )}
+            </List>
+          </>
+        )}
+      </Box>
       {showAddModal && (
         <AddNeedModal churchId={churchId} userId={userId} setShowAddModal={setShowAddModal} />
       )}
-    </main>
+    </Container>
   )
 }
 
@@ -88,7 +79,7 @@ const AddNeedModal: React.FC<AddModalProps> = ({ userId, churchId, setShowAddMod
     }
 
     const post = async () => {
-      const response = await fetch("api/needs/add", {
+      const response = await fetch("api/needs", {
         method: "POST",
         headers: {
           "Accept": "application/json"

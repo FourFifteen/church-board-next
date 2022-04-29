@@ -1,20 +1,31 @@
-import { onValue, ref } from 'firebase/database'
-import firebase from '../../../firebase'
+import { push, ref, set } from 'firebase/database'
+import firebase from '../../../firebase/client'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { Need } from '../../../types/entities/Need'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const needsRef = ref(firebase.database, 'needs/')
-  console.log(needsRef)
-  try {
-    onValue(needsRef, (snapshot) => {
-      const data = snapshot.val()
-      console.log(data)
-      res.status(200).json({ data })
-      return
-    })
-  } catch (err) {
-    res.status(500).json({ error: "error getting data from db", })
-    return
+  const method = req.method
+
+  // ADD A NEW NEED
+  if (method === "POST") {
+
+    const body: { name: string, fulfilledState: Need["fulfilledState"], description: string } = JSON.parse(req.body)
+    console.log(firebase.database)
+
+    const needData = {
+      ownerId: "test",
+      assigneeId: null,
+      ...body,
+    }
+    const need: Need = {
+      ...needData,
+    }
+    const needsListRef = ref(firebase.database, 'needs')
+    const newNeedRef = push(needsListRef)
+    await set(newNeedRef, needData)
+    res.status(200).json({ data: need })
+
+  } else {
+    res.status(400).json({ error: "Bad request. Please use hook for GET requests" })
   }
 }
-
