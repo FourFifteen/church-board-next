@@ -50,8 +50,7 @@ export default function NeedsPage({ userId, churchId }: Props) {
                     <Text>{assigneeId}</Text>
                   </ListItem>
                 )
-              }
-              )}
+              })}
             </List>
           </>
         )}

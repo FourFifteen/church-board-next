@@ -9,8 +9,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // ADD A NEW NEED
   if (method === "POST") {
 
-    const body: { name: string, fulfilledState: Need["fulfilledState"], description: string } = JSON.parse(req.body)
-    console.log(firebase.database)
+    const body: {
+      name: string,
+      fulfilledState: Need["fulfilledState"],
+      description: string
+    } = JSON.parse(req.body)
 
     const needData = {
       ownerId: "test",
