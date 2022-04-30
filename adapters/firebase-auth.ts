@@ -1,4 +1,5 @@
-// This is a carbon copy of https://github.com/luiz-chagas/react-auth-service/blob/main/src/adapters/firebase-auth.ts
+// This is a carbon copy of
+// https://github.com/luiz-chagas/react-auth-service/blob/main/src/adapters/firebase-auth.ts
 // Adapters have no idea this is a react application
 // All they care about is conforming to the interface AuthService
 
@@ -8,6 +9,7 @@ import {
   getAuth,
   signInWithRedirect,
   FacebookAuthProvider,
+  EmailAuthProvider,
   AuthProvider as FirebaseAuthProvider,
 } from "firebase/auth";
 import { getApps, initializeApp } from "firebase/app";
@@ -47,11 +49,13 @@ const onUserChanged: AuthService["onUserChanged"] = (callback) =>
     return callback(transformUser(maybeFirebaseUser));
   });
 
+const providerList: Record<AuthProviders, FirebaseAuthProvider> = {
+  Email: new EmailAuthProvider(),
+  Facebook: new FacebookAuthProvider(),
+  Google: new GoogleAuthProvider(),
+};
+
 const signIn: AuthService["signIn"] = async (provider) => {
-  const providerList: Record<AuthProviders, FirebaseAuthProvider> = {
-    Facebook: new FacebookAuthProvider(),
-    Google: new GoogleAuthProvider(),
-  };
 
   const selectedProvider = providerList[provider];
 
@@ -69,3 +73,4 @@ export const FirebaseAuthService: AuthService = {
   signIn,
   signOut,
 };
+

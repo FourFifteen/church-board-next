@@ -13,7 +13,7 @@ import { User } from "../types/entities/User"
 import { Service } from "./rootService"
 
 // AuthProviders we want to support
-export type AuthProviders = "Google" | "Facebook";
+export type AuthProviders = "Email" | "Google" | "Facebook";
 
 // This is what external adapters have to implement
 // Make sure this interface will fulfill all the needs of the application
