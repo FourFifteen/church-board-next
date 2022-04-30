@@ -1,7 +1,7 @@
 import { firebaseConfig } from './firebase-config'
 import { getApps, initializeApp } from 'firebase/app'
 import { getDatabase, push, ref, set } from 'firebase/database'
-import { DatabaseProviders, DocDatabaseService, TableRefs } from '../services/database'
+import { DocDatabaseService, TableRefs } from '../services/database'
 import { useList } from 'react-firebase-hooks/database'
 
 // Base initializer. Matches the AuthService

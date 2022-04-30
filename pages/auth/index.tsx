@@ -1,4 +1,4 @@
-import { As, Box, Center, Container, Icon, Spinner, Stack, Text } from '@chakra-ui/react'
+import { As, Box, Container, Icon, Spinner, Stack, Text } from '@chakra-ui/react'
 import { NextPage } from 'next'
 import { FC, useEffect } from 'react'
 import { RiFacebookCircleFill, RiGoogleFill, RiAtFill } from 'react-icons/ri'
@@ -22,24 +22,22 @@ const AuthPage: NextPage = () => {
   ]
 
   return (
-    <Container>
-      <Center>
-        <Box>
-          {isLoading && <Spinner />}
-          {!currentUser && (
-            <>
-              {signInOptions.map(({ provider, icon, text }, index) => (
-                <SignInButton
-                  provider={provider}
-                  icon={icon}
-                  text={text}
-                  key={`${index}${provider}`}
-                />
-              ))}
-            </>
-          )}
-        </Box>
-      </Center>
+    <Container centerContent>
+      <Box>
+        {isLoading && <Spinner />}
+        {!currentUser && (
+          <>
+            {signInOptions.map(({ provider, icon, text }, index) => (
+              <SignInButton
+                provider={provider}
+                icon={icon}
+                text={text}
+                key={`${index}${provider}`}
+              />
+            ))}
+          </>
+        )}
+      </Box>
     </Container>
   )
 }

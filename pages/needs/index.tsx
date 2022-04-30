@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Center,
   Container,
   Input,
   List,
@@ -15,13 +14,13 @@ import { Need } from '../../types/entities/Need'
 import { useList } from 'react-firebase-hooks/database'
 import { FirebaseDocDatabaseService } from '../../adapters/firebase-database'
 import { TableRefs } from '../../services/database'
+import { NextPage } from "next"
 
 type Props = {
   userId: string
-  churchId: string
 }
 
-export default function NeedsPage({ userId, churchId }: Props) {
+const NeedsPage: NextPage<Props> = ({ userId }) => {
   const [showAddModal, setShowAddModal] = useState(false)
   const needsRef = useRef<TableRefs | null>(null)
   const [snapshots, loading, error] = useList(needsRef.current)
@@ -40,9 +39,9 @@ export default function NeedsPage({ userId, churchId }: Props) {
   }
 
   return (
-    <Container>
-      {loading && <Center><Spinner /></Center>}
-      {error && <Center><Text>Encountered an error loading the Needs data. Sorry!</Text></Center>}
+    <Container centerContent>
+      {loading && <Spinner />}
+      {error && <Text>Encountered an error loading the Needs data. Sorry!</Text>}
       <Box>
         {/* We are: -Loading, -Have no valid db reference, -Have a valid reference with no data */}
         {(!snapshots || snapshots && !snapshots.length) && !loading &&
@@ -71,7 +70,7 @@ export default function NeedsPage({ userId, churchId }: Props) {
         )}
       </Box>
       {showAddModal && (
-        <AddNeedModal churchId={churchId} userId={userId} setShowAddModal={setShowAddModal} />
+        <AddNeedModal userId={userId} setShowAddModal={setShowAddModal} />
       )}
     </Container>
   )
@@ -81,7 +80,7 @@ interface AddModalProps extends Props {
   setShowAddModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const AddNeedModal: React.FC<AddModalProps> = ({ userId, churchId, setShowAddModal }) => {
+const AddNeedModal: React.FC<AddModalProps> = ({ userId, setShowAddModal }) => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [createdNeed, setCreatedNeed] = useState<Need | null>(null)
@@ -111,10 +110,10 @@ const AddNeedModal: React.FC<AddModalProps> = ({ userId, churchId, setShowAddMod
 
     post()
 
-  }, [name, description, churchId, userId, submitting])
+  }, [name, description, userId, submitting])
 
   useEffect(() => {
-    if (createdNeed && createdNeed.id) {
+    if (createdNeed) {
       setSubmitting(false)
     }
   }, [createdNeed])
@@ -146,4 +145,6 @@ const AddNeedModal: React.FC<AddModalProps> = ({ userId, churchId, setShowAddMod
     </Box>
   )
 }
+
+export default NeedsPage
 
