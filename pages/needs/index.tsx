@@ -9,11 +9,9 @@ import {
   Text,
   Textarea
 } from "@chakra-ui/react"
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Need } from '../../types/entities/Need'
-import { useList } from 'react-firebase-hooks/database'
-import { FirebaseDocDatabaseService } from '../../adapters/firebase-database'
-import { TableRefs } from '../../services/database'
+import { useDBServiceList } from '../../adapters/firebase-database'
 import { NextPage } from "next"
 
 type Props = {
@@ -22,13 +20,8 @@ type Props = {
 
 const NeedsPage: NextPage<Props> = ({ userId }) => {
   const [showAddModal, setShowAddModal] = useState(false)
-  const needsRef = useRef<TableRefs | null>(null)
-  const [snapshots, loading, error] = useList(needsRef.current)
+  const [snapshots, loading, error] = useDBServiceList('needs')
 
-  useEffect(() => {
-    FirebaseDocDatabaseService.init()
-    needsRef.current = FirebaseDocDatabaseService.getTableRef('needs')
-  }, [])
   const renderAddState = (text?: string) => {
     return (
       <>

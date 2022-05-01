@@ -4,6 +4,7 @@ import { FirebaseDocDatabaseService } from '../../../adapters/firebase-database'
 import { Need } from '../../../types/entities/Need'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // ensure that we have an instance of the db
   const { getTableRef } = FirebaseDocDatabaseService
   const method = req.method
 
