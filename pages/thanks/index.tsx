@@ -4,7 +4,8 @@ import { Container, Flex, Heading, Icon, Spinner, Stack, Text } from '@chakra-ui
 import { RiUser5Fill } from 'react-icons/ri'
 import { useAuth } from '../../services/auth'
 import { Thanks } from '../../types/entities/Thanks'
-
+import { FC, useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 const ThanksPage: NextPage = () => {
   const { currentUser, isLoading } = useAuth()
