@@ -1,4 +1,4 @@
-import { Database, DatabaseReference } from "firebase/database"
+import { Database, DatabaseReference, DataSnapshot } from "firebase/database"
 import React, {
   createContext,
   PropsWithChildren,
@@ -11,10 +11,16 @@ import { Service } from "./rootService"
 
 export type DatabaseProviders = Database
 export type TableRefs = DatabaseReference
+export type TableResultTypes = DataSnapshot[]
+export type ValueResultTypes = DataSnapshot
 
 export interface DocDatabaseService extends Service {
   getInstance: () => DatabaseProviders
   getTableRef: (tableName: string) => TableRefs
+  getVal: (tableName: string) => Promise<ValueResultTypes>
+  getValFromRef: (tableRef: TableRefs) => Promise<ValueResultTypes>
+  setVal: <T>(tableName: string, value: T) => Promise<T | null>
+  setValFromRef: <T>(tableRef: TableRefs, value: T) => Promise<T | null>
   setList: <T>(table: string, value: T) => Promise<T | null>
   setListFromRef: <T>(tableRef: TableRefs, value: T) => Promise<T | null>
 }
