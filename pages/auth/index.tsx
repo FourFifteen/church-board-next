@@ -6,12 +6,21 @@ import { AuthProviders, useAuth } from '../../services/auth'
 
 type SignInOptions = { provider: AuthProviders, icon: As, text?: string }
 
+
 const AuthPage: NextPage = () => {
   const { isLoading, currentUser } = useAuth()
 
   useEffect(() => {
+    const fetcher = async () => {
+      await fetch("api/auth", {
+        method: "POST",
+        body: JSON.stringify(currentUser)
+      })
+      window.location.href = "/"
+    }
     if (currentUser) {
-      window.location.href = '/needs'
+      console.log("hello world")
+      fetcher()
     }
   }, [currentUser])
 

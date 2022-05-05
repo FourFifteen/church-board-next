@@ -10,6 +10,7 @@ import {
   FC,
 } from "react";
 import { User } from "../types/entities/User"
+import { DocDatabaseService } from "./database";
 import { Service } from "./rootService"
 
 // AuthProviders we want to support
@@ -55,15 +56,17 @@ const AuthContext = createContext<AuthServiceContext>({
 
 export const useAuth = () => useContext(AuthContext);
 
-export const makeAuthContextProvider = (serviceProvider: AuthService) => {
-  serviceProvider.init();
+export const makeAuthContextProvider = (
+  authServiceProvider: AuthService,
+) => {
+  authServiceProvider.init();
 
   const Provider: FC<PropsWithChildren<unknown>> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-      const unsubscribe = serviceProvider.onUserChanged((maybeUser) => {
+      const unsubscribe = authServiceProvider.onUserChanged((maybeUser) => {
         setIsLoading(false);
         setUser(maybeUser);
       });
@@ -72,7 +75,7 @@ export const makeAuthContextProvider = (serviceProvider: AuthService) => {
     }, []);
 
     useEffect(() => {
-      serviceProvider.getUser().then((maybeUser) => {
+      authServiceProvider.getUser().then((maybeUser) => {
         setIsLoading(false);
         setUser(maybeUser);
       });
@@ -84,9 +87,9 @@ export const makeAuthContextProvider = (serviceProvider: AuthService) => {
         isLoading: isLoading,
         signIn: (provider) => {
           setIsLoading(true);
-          return serviceProvider.signIn(provider);
+          return authServiceProvider.signIn(provider);
         },
-        signOut: serviceProvider.signOut,
+        signOut: authServiceProvider.signOut,
       }),
       [isLoading, user]
     );

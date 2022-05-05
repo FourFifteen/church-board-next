@@ -8,7 +8,7 @@ import '../styles/globals.css'
 
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const AuthProvider = makeAuthContextProvider(FirebaseAuthService)
+  const AuthProvider = makeAuthContextProvider(FirebaseAuthService, FirebaseDocDatabaseService)
   const DatabaseProvider = makeDatabaseContextProvider(FirebaseDocDatabaseService)
 
   // My gut says that order matters here. It makes sense that we should have Auth before Database.

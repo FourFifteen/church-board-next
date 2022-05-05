@@ -11,6 +11,7 @@ import {
   FacebookAuthProvider,
   EmailAuthProvider,
   AuthProvider as FirebaseAuthProvider,
+  getRedirectResult,
 } from "firebase/auth";
 import { getApps, initializeApp } from "firebase/app";
 import { firebaseConfig } from './firebase-config'
@@ -33,6 +34,7 @@ const transformUser = (user: FirebaseUser): User => ({
   id: user.uid,
   email: user.email,
   name: user.displayName ?? "Visitor",
+  photoURL: user.photoURL ?? undefined
 });
 
 const getUser: AuthService["getUser"] = async () => {
@@ -61,7 +63,11 @@ const signIn: AuthService["signIn"] = async (provider) => {
 
   if (!selectedProvider) throw Error(AuthErrors.InvalidProdiver);
 
-  return signInWithRedirect(getAuth(), selectedProvider);
+  const auth = getAuth()
+
+  return signInWithRedirect(auth, selectedProvider);
+
+
 };
 
 const signOut: AuthService["signOut"] = () => getAuth().signOut();
