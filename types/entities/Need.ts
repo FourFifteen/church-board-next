@@ -6,7 +6,7 @@ export type FulfilledState =
   | "N/A"
 
 
-export type Need = {
+export type NeedData = {
   name: string
   description: string
   fulfilledState: FulfilledState
@@ -14,3 +14,7 @@ export type Need = {
   assigneeId: string | null
 }
 
+
+export interface Need extends NeedData {
+  id: string | number
+}

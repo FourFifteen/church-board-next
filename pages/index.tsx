@@ -16,7 +16,7 @@ import NextLink from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useDBServiceList } from '../adapters/firebase-database'
 import { useAuth } from '../services/auth'
-import { Need } from '../types/entities/Need'
+import { NeedData } from '../types/entities/Need'
 
 const CHURCH_NAME = process.env.NEXT_PUBLIC_CHURCH_NAME
 const Welcome = () => <Heading as="h1">Welcome to {CHURCH_NAME}&apos;s Needs Board</Heading>
@@ -34,6 +34,7 @@ const Home: NextPage = () => {
       </>
     )
   }
+
   return (
     <Container centerContent>
       {isLoading && <Spinner />}
@@ -59,13 +60,23 @@ const Home: NextPage = () => {
                 if (!snapshot) {
                   return null
                 }
-                const { name, description, fulfilledState, assigneeId } = snapshot.val()
+                const { name, description, fulfilledState, ownerId, assigneeId } = snapshot.val()
                 return (
                   <ListItem key={snapshot.key}>
                     <Text>{name}</Text>
                     <Text>{description}</Text>
                     <Text>{fulfilledState}</Text>
                     <Text>{assigneeId}</Text>
+                    <Text>{ownerId}</Text>
+                    <NextLink
+                      href={{
+                        pathname: 'thanks/add',
+                        query: { needId: snapshot.key, aId: assigneeId }
+                      }}
+                      passHref
+                    >
+                      <Button as={Link}>Send some thanks</Button>
+                    </NextLink>
                   </ListItem>
                 )
               })}
@@ -88,7 +99,7 @@ interface AddModalProps {
 const AddNeedModal: React.FC<AddModalProps> = ({ userId, setShowAddModal }) => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [createdNeed, setCreatedNeed] = useState<Need | null>(null)
+  const [createdNeed, setCreatedNeed] = useState<NeedData | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
