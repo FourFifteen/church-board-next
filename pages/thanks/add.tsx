@@ -26,8 +26,8 @@ const AddThanksPage: NextPage = () => {
       <Stack direction="column">
         <Textarea
           placeholder="Thank God for meeting my needs through this person"
-          onChange={(e) => setMessage(e.target.value)} /
-        >
+          onChange={(e) => setMessage(e.target.value)}
+        />
         <Button onClick={() => setSubmitting(true)}>Submit</Button>
       </Stack>
     </Container>
