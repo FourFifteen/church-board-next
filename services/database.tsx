@@ -21,8 +21,8 @@ export interface DocDatabaseService extends Service {
   getValFromRef: (tableRef: TableRefs) => Promise<ValueResultTypes>
   setVal: <T>(tableName: string, value: T) => Promise<T | null>
   setValFromRef: <T>(tableRef: TableRefs, value: T) => Promise<T | null>
-  setList: <T>(table: string, value: T) => Promise<T | null>
-  setListFromRef: <T>(tableRef: TableRefs, value: T) => Promise<T | null>
+  setList: <T extends object>(table: string, value: T, method?: "set" | "update") => Promise<T | null>
+  setListFromRef: <T extends object>(tableRef: TableRefs, value: T, method?: "set" | "update") => Promise<T | null>
 }
 
 // Define a context for React to use in conjunction with the reacr-firebase-hooks library

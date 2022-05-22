@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { FirebaseDocDatabaseService } from '../../../adapters/firebase-database'
 import { NeedData } from '../../../types/entities/Need'
+import { sendNeedsResponse } from '../../../utils/needs'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // ensure that we have an instance of the db
   const { setList } = FirebaseDocDatabaseService
   const method = req.method
-
+  const needsResponseMessages = sendNeedsResponse(res)
   // ADD A NEW NEED
   if (method === "POST") {
     const body: {
@@ -23,8 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ...needData,
     }
     await setList('needs', need)
-    res.status(200).json({ data: need })
+    needsResponseMessages(200)(need)
   } else {
-    res.status(400).json({ error: "Bad request. Please use hook for GET requests" })
+    needsResponseMessages(400)()
   }
 }
