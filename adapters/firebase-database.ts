@@ -1,5 +1,5 @@
 import { getApps, initializeApp } from 'firebase/app'
-import { equalTo, get, getDatabase, push, query, ref, set } from 'firebase/database'
+import { equalTo, get, getDatabase, push, query, ref, set, update } from 'firebase/database'
 import { useList } from 'react-firebase-hooks/database'
 import { DocDatabaseService, TableRefs } from '../services/database'
 import { firebaseConfig } from './firebase-config'
@@ -50,19 +50,27 @@ const setFirebaseValFromRef: DocDatabaseService["setValFromRef"] =
   }
 
 const setFirebaseList: DocDatabaseService["setList"]
-  = async <TableValue>(table: string, value: TableValue) => {
+  = async <TableValue extends object>(table: string, value: TableValue, method = "set") => {
     const dbRef = getFirebaseRef(table)
     const newValueRef = await push(dbRef)
-    await set(newValueRef, value)
+    if (method === "set") {
+      await set(newValueRef, value)
+    } else {
+      await update(newValueRef, value)
+    }
     return value
   }
 
 const setFirebaseRefList: DocDatabaseService["setListFromRef"]
-  = async <TableValue>(tableRef: TableRefs, value: TableValue) => {
-    const newValueRef = await push(tableRef)
+  = async <TableValue extends object>(tableRef: TableRefs, value: TableValue, method = "set") => {
+    const newValueRef = method === "set"
+      ? await push(tableRef)
+      : tableRef
     await set(newValueRef, value)
     return value
   }
+
+
 
 export const FirebaseDocDatabaseService: DocDatabaseService = {
   init: initializeFirebase,

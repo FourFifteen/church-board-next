@@ -8,3 +8,5 @@ export type User = {
 export interface Admin extends User {
   isAdmin: boolean
 }
+
+export type UserID = User["id"]
