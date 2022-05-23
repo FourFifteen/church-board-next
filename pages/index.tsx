@@ -79,15 +79,8 @@ const Home: NextPage = () => {
 
     post()
   }, [activeNeed, hasActiveNeedChanged])
-  const renderAddState = (text?: string) => {
-    return (
-      <>
-        {text && <Text>{text}</Text>}
-        <Button onClick={() => setShowModal("add")}>Add</Button>
-      </>
-    )
-  }
 
+  // HANDLERS
   const handleOpenDetail = (need: Need) => {
     setShowModal("detail")
     setActiveNeed(need)
@@ -110,6 +103,48 @@ const Home: NextPage = () => {
     console.log('checking save status:', areNeedsEqual, activeNeed)
     setHasActiveNeedChanged(areNeedsEqual)
     return
+  }
+
+  // RENDER HELPERS
+  const renderAddState = (text?: string) => {
+    return (
+      <>
+        {text && <Text>{text}</Text>}
+        <Button onClick={() => setShowModal("add")}>Add</Button>
+      </>
+    )
+  }
+
+  const renderThanksButton = (
+    needId: string,
+    {
+      ownerId,
+      assigneeId,
+      fulfilledState 
+    }: {
+      ownerId: Need["ownerId"],
+      assigneeId: Need["assigneeId"],
+      fulfilledState: Need["fulfilledState"]
+    },
+  ) => {
+    const isNotOwnNeed = assigneeId && assigneeId !== ownerId
+    const isFulfilled = fulfilledState === "Fulfilled"
+
+    if (!isNotOwnNeed || !isFulfilled) {
+      return null
+    }
+
+    return (
+      <NextLink
+        href={{
+          pathname: 'thanks/add',
+          query: { needId, aId: assigneeId }
+        }}
+        passHref
+      >
+        <Button as={Link}>Send some thanks</Button>
+      </NextLink>
+    )
   }
 
   return (
@@ -160,15 +195,7 @@ const Home: NextPage = () => {
                       <Text>{fulfilledState}</Text>
                       <Text>{assigneeId}</Text>
                       <Text>{ownerId}</Text>
-                      <NextLink
-                        href={{
-                          pathname: 'thanks/add',
-                          query: { needId: key, aId: assigneeId }
-                        }}
-                        passHref
-                      >
-                        <Button as={Link}>Send some thanks</Button>
-                      </NextLink>
+                      {renderThanksButton(key, need)}
                       {updatedNeedErrorMessage && (
                         <Alert status="error">
                           <AlertIcon />
