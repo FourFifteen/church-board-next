@@ -1,6 +1,6 @@
 import { getApps, initializeApp } from 'firebase/app'
 import { equalTo, get, getDatabase, push, query, ref, set, update } from 'firebase/database'
-import { useList } from 'react-firebase-hooks/database'
+import { useList, useObject } from 'react-firebase-hooks/database'
 import { DocDatabaseService, TableRefs } from '../services/database'
 import { firebaseConfig } from './firebase-config'
 
@@ -70,8 +70,6 @@ const setFirebaseRefList: DocDatabaseService["setListFromRef"]
     return value
   }
 
-
-
 export const FirebaseDocDatabaseService: DocDatabaseService = {
   init: initializeFirebase,
   getInstance: getFirebaseInstance,
@@ -84,10 +82,10 @@ export const FirebaseDocDatabaseService: DocDatabaseService = {
   setListFromRef: setFirebaseRefList
 }
 
-
 // react-firebase-hooks wrappers
 
 export const useDBServiceList = (tableName: string) => useList(getFirebaseRef(tableName))
+export const useDBServiceObject = (tableName: string) => useObject(getFirebaseRef(tableName))
 
 export const useGetDBListValue =
   <T extends string | number | boolean | null>(tableName: string, keyToSearch: T) => {
@@ -96,4 +94,3 @@ export const useGetDBListValue =
     return useList(queryResult)
   }
 // other hooks that could be implemented: useListKeys, useListVals, useObject... and so on.
-

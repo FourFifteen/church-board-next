@@ -1,9 +1,13 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { FirebaseDocDatabaseService } from '../../../adapters/firebase-database'
-import { User } from '../../../types'
+import { NextApiRequest, NextApiResponse } from "next"
+import { FirebaseDocDatabaseService } from "../../../adapters/firebase-database"
+import { User } from "../../../types"
 
-export default async function hander(req: NextApiRequest, res: NextApiResponse) {
-  const { getValFromRef, getTableRef, setValFromRef } = FirebaseDocDatabaseService
+export default async function hander(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const { getValFromRef, getTableRef, setValFromRef } =
+    FirebaseDocDatabaseService
   const getUserRef = (id: User["id"]) => getTableRef("users/" + id)
   const method = req.method
 
@@ -42,8 +46,8 @@ export default async function hander(req: NextApiRequest, res: NextApiResponse) 
       return await setUserIfNew()
     default:
       return res.status(400).json({
-        error: "Bad request. This endpoint is for only for creating and updating users."
+        error:
+          "Bad request. This endpoint is for only for creating and updating users.",
       })
   }
-
 }

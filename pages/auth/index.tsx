@@ -1,11 +1,18 @@
-import { As, Box, Container, Icon, Spinner, Stack, Text } from '@chakra-ui/react'
-import { NextPage } from 'next'
-import { FC, useEffect } from 'react'
-import { RiFacebookCircleFill, RiGoogleFill, RiAtFill } from 'react-icons/ri'
-import { AuthProviders, useAuth } from '../../services/auth'
+import {
+  As,
+  Box,
+  Container,
+  Icon,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react"
+import { NextPage } from "next"
+import { FC, useEffect } from "react"
+import { RiAtFill, RiFacebookCircleFill, RiGoogleFill } from "react-icons/ri"
+import { AuthProviders, useAuth } from "../../services/auth"
 
-type SignInOptions = { provider: AuthProviders, icon: As, text?: string }
-
+type SignInOptions = { provider: AuthProviders; icon: As; text?: string }
 
 const AuthPage: NextPage = () => {
   const { isLoading, currentUser } = useAuth()
@@ -14,7 +21,7 @@ const AuthPage: NextPage = () => {
     const fetcher = async () => {
       await fetch("api/auth", {
         method: "POST",
-        body: JSON.stringify(currentUser)
+        body: JSON.stringify(currentUser),
       })
       window.location.href = "/"
     }
@@ -27,7 +34,7 @@ const AuthPage: NextPage = () => {
   const signInOptions: SignInOptions[] = [
     { provider: "Google", icon: RiGoogleFill },
     { provider: "Facebook", icon: RiFacebookCircleFill },
-    { provider: "Email", icon: RiAtFill, text: "your email" }
+    { provider: "Email", icon: RiAtFill, text: "your email" },
   ]
 
   return (
@@ -54,7 +61,6 @@ const AuthPage: NextPage = () => {
 const SignInButton: FC<SignInOptions> = ({ provider, icon, text }) => {
   const { signIn } = useAuth()
   return (
-
     <Stack as="button" direction="row" onClick={() => signIn(provider)}>
       <Icon as={icon} role="presentation" />
       <Text size="sm">Sign in with {text ? text : provider}</Text>

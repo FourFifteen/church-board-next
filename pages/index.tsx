@@ -14,62 +14,62 @@ import {
   Spinner,
   Stack,
   Text,
-  Textarea
-} from '@chakra-ui/react'
-import isEqual from 'lodash/fp/isEqual'
-import type { NextPage } from 'next'
-import NextLink from 'next/link'
-import React, { useEffect, useState } from 'react'
-import { useDBServiceList } from '../adapters/firebase-database'
-import NeedDetail from '../components/NeedDetail'
-import { useAuth } from '../services/auth'
-import { Need, NeedData, NEED_MODAL_DISPLAY_STATES, UserID } from '../types'
+  Textarea,
+} from "@chakra-ui/react"
+import isEqual from "lodash/fp/isEqual"
+import type { NextPage } from "next"
+import NextLink from "next/link"
+import React, { useEffect, useState } from "react"
+import { useDBServiceList } from "../adapters/firebase-database"
+import NeedDetail from "../components/NeedDetail"
+import { useAuth } from "../services/auth"
+import { NEED_MODAL_DISPLAY_STATES, Need, NeedData, UserID } from "../types"
 
 const CHURCH_NAME = process.env.NEXT_PUBLIC_CHURCH_NAME
-const Welcome = () => <Heading as="h1">Welcome to {CHURCH_NAME}&apos;s Needs Board</Heading>
-
+const Welcome = () => (
+  <Heading as="h1">Welcome to {CHURCH_NAME}&apos;s Needs Board</Heading>
+)
 
 const Home: NextPage = () => {
   const { currentUser, isLoading } = useAuth()
   const [showModal, setShowModal] = useState<NEED_MODAL_DISPLAY_STATES>("none")
   const [activeNeed, setActiveNeed] = useState<Need | null>(null)
   const [hasActiveNeedChanged, setHasActiveNeedChanged] = useState(false)
-  const [snapshots, loading, error] = useDBServiceList('needs')
+  const [snapshots, loading, error] = useDBServiceList("needs")
 
-  const [updatedNeedErrorMessage, setUpdatedNeedErrorMessage] = useState('')
-  const [updatedNeedConfirmMessage, setUpdatedNeedConfirmMessage] = useState('')
+  const [updatedNeedErrorMessage, setUpdatedNeedErrorMessage] = useState("")
+  const [updatedNeedConfirmMessage, setUpdatedNeedConfirmMessage] = useState("")
 
   // PATCH CALL FOR UPDATES
   useEffect(() => {
     console.log(activeNeed)
     console.log(hasActiveNeedChanged)
     if (!activeNeed || !hasActiveNeedChanged) {
-      console.log('short circuiting')
+      console.log("short circuiting")
       return
     }
-    console.log('running the useEffect')
+    console.log("running the useEffect")
 
     const post = async () => {
-      console.log('running the patch!')
+      console.log("running the patch!")
       try {
         const response = await fetch("api/needs/" + activeNeed.id, {
           method: "PATCH",
           headers: {
-            "Accept": "application/json"
+            Accept: "application/json",
           },
           // we already updated its values in the handleSaveActiveNeed function
-          body: JSON.stringify(activeNeed)
+          body: JSON.stringify(activeNeed),
         })
         const data = await response.json()
         if (!data) {
           throw new Error("Got nothing back")
         }
         setUpdatedNeedConfirmMessage("Need saved!")
-
       } catch (err) {
         console.error(err)
         setUpdatedNeedErrorMessage(
-          "Ran into a problem updating your need. Please make sure you are online then try again."
+          "Ran into a problem updating your need. Please make sure you are online then try again.",
         )
       } finally {
         setHasActiveNeedChanged(false)
@@ -92,18 +92,19 @@ const Home: NextPage = () => {
 
   // By currying this function, we can "save" the first parameter in the function,
   // then compare it to the new one when we actually run the enclosed function
-  const handleSaveActiveNeed = (needBeforeChange: Need) => (newValues: Need) => {
-    // only post the write if they're actually different. 
-    const areNeedsEqual = !isEqual(needBeforeChange, newValues)
-    if (areNeedsEqual) {
-      setActiveNeed({
-        ...newValues
-      })
+  const handleSaveActiveNeed =
+    (needBeforeChange: Need) => (newValues: Need) => {
+      // only post the write if they're actually different.
+      const areNeedsEqual = !isEqual(needBeforeChange, newValues)
+      if (areNeedsEqual) {
+        setActiveNeed({
+          ...newValues,
+        })
+      }
+      console.log("checking save status:", areNeedsEqual, activeNeed)
+      setHasActiveNeedChanged(areNeedsEqual)
+      return
     }
-    console.log('checking save status:', areNeedsEqual, activeNeed)
-    setHasActiveNeedChanged(areNeedsEqual)
-    return
-  }
 
   // RENDER HELPERS
   const renderAddState = (text?: string) => {
@@ -120,10 +121,10 @@ const Home: NextPage = () => {
     {
       ownerId,
       assigneeId,
-      fulfilledState 
+      fulfilledState,
     }: {
-      ownerId: Need["ownerId"],
-      assigneeId: Need["assigneeId"],
+      ownerId: Need["ownerId"]
+      assigneeId: Need["assigneeId"]
       fulfilledState: Need["fulfilledState"]
     },
   ) => {
@@ -137,8 +138,8 @@ const Home: NextPage = () => {
     return (
       <NextLink
         href={{
-          pathname: 'thanks/add',
-          query: { needId, aId: assigneeId }
+          pathname: "thanks/add",
+          query: { needId, aId: assigneeId },
         }}
         passHref
       >
@@ -154,16 +155,22 @@ const Home: NextPage = () => {
         <>
           <Welcome />
           <Text>Let&apos;s get you logged in.</Text>
-          <NextLink href="/auth" passHref><Link>Log in</Link></NextLink>
+          <NextLink href="/auth" passHref>
+            <Link>Log in</Link>
+          </NextLink>
         </>
       )}
       {loading && <Spinner />}
-      {error && <Text>Encountered an error loading the Needs data. Sorry!</Text>}
+      {error && (
+        <Text>Encountered an error loading the Needs data. Sorry!</Text>
+      )}
       <Box>
         {/* We are: -Loading, -Have no valid db reference, -Have a valid reference with no data */}
-        {(!snapshots || snapshots && !snapshots.length) && !loading &&
-          renderAddState("Looks like no needs have been added. Add your first one now!")
-        }
+        {(!snapshots || (snapshots && !snapshots.length)) &&
+          !loading &&
+          renderAddState(
+            "Looks like no needs have been added. Add your first one now!",
+          )}
         {snapshots && snapshots.length && (
           <>
             {renderAddState()}
@@ -172,7 +179,13 @@ const Home: NextPage = () => {
                 if (!snapshot || !snapshot.key) {
                   return null
                 }
-                const { name, description, fulfilledState, ownerId, assigneeId } = snapshot.val()
+                const {
+                  name,
+                  description,
+                  fulfilledState,
+                  ownerId,
+                  assigneeId,
+                } = snapshot.val()
                 const key = snapshot.key
                 const need: Need = {
                   name,
@@ -180,7 +193,7 @@ const Home: NextPage = () => {
                   fulfilledState,
                   id: key,
                   ownerId,
-                  assigneeId
+                  assigneeId,
                 }
 
                 return (
@@ -200,8 +213,9 @@ const Home: NextPage = () => {
                         <Alert status="error">
                           <AlertIcon />
                           <AlertTitle>Update Error!</AlertTitle>
-                          <AlertDescription>{updatedNeedErrorMessage}</AlertDescription>
-
+                          <AlertDescription>
+                            {updatedNeedErrorMessage}
+                          </AlertDescription>
                         </Alert>
                       )}
                       {/* currently triggering on all */}
@@ -220,7 +234,10 @@ const Home: NextPage = () => {
         )}
       </Box>
       {currentUser && showModal === "add" && (
-        <AddNeedModal userId={currentUser.id} handleCloseModal={() => setShowModal("none")} />
+        <AddNeedModal
+          userId={currentUser.id}
+          handleCloseModal={() => setShowModal("none")}
+        />
       )}
       {currentUser && activeNeed && showModal === "detail" && (
         <NeedDetail
@@ -240,9 +257,12 @@ interface AddModalProps {
   handleCloseModal: () => void
 }
 
-const AddNeedModal: React.FC<AddModalProps> = ({ userId, handleCloseModal }) => {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
+const AddNeedModal: React.FC<AddModalProps> = ({
+  userId,
+  handleCloseModal,
+}) => {
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
   const [createdNeed, setCreatedNeed] = useState<NeedData | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -255,21 +275,20 @@ const AddNeedModal: React.FC<AddModalProps> = ({ userId, handleCloseModal }) => 
       const response = await fetch("api/needs", {
         method: "POST",
         headers: {
-          "Accept": "application/json"
+          Accept: "application/json",
         },
         body: JSON.stringify({
           name,
           description,
           fulfilledState: "Unfulfilled",
-          ownerId: userId
-        })
+          ownerId: userId,
+        }),
       })
       const data = await response.json()
       setCreatedNeed(data.need)
     }
 
     post()
-
   }, [name, description, userId, submitting])
 
   useEffect(() => {
@@ -281,7 +300,9 @@ const AddNeedModal: React.FC<AddModalProps> = ({ userId, handleCloseModal }) => 
   if (createdNeed && createdNeed.name) {
     return (
       <Box>
-        <Text>Created new need: <strong>{createdNeed.name}</strong></Text>
+        <Text>
+          Created new need: <strong>{createdNeed.name}</strong>
+        </Text>
         <Button onClick={handleCloseModal}>Close</Button>
       </Box>
     )
