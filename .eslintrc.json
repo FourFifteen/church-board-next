@@ -3,7 +3,6 @@
   "plugins": [
     "@typescript-eslint",
     "react",
-    "cypress",
     "@next/next"
   ],
   "extends": [
@@ -19,8 +18,7 @@
     "es6": true,
     "browser": true,
     "jest": true,
-    "node": true,
-    "cypress/globals": true
+    "node": true
   },
   "settings": {
     "react": {
