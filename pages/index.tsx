@@ -1,18 +1,11 @@
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
   Container,
   Heading,
   Input,
   Link,
-  List,
-  ListItem,
   Spinner,
-  Stack,
   Text,
   Textarea,
 } from "@chakra-ui/react"
@@ -22,8 +15,15 @@ import NextLink from "next/link"
 import React, { useEffect, useState } from "react"
 import { useDBServiceList } from "../adapters/firebase-database"
 import NeedDetail from "../components/NeedDetail"
+import NeedList from "../components/NeedList"
 import { useAuth } from "../services/auth"
-import { NEED_MODAL_DISPLAY_STATES, Need, NeedData, UserID } from "../types"
+import {
+  NEED_MODAL_DISPLAY_STATES,
+  Need,
+  NeedData,
+  User,
+  UserID,
+} from "../types"
 
 const CHURCH_NAME = process.env.NEXT_PUBLIC_CHURCH_NAME
 const Welcome = () => (
@@ -37,6 +37,7 @@ const Home: NextPage = () => {
   const [hasActiveNeedChanged, setHasActiveNeedChanged] = useState(false)
   const [snapshots, loading, error] = useDBServiceList("needs")
 
+  // Data display
   const [updatedNeedErrorMessage, setUpdatedNeedErrorMessage] = useState("")
   const [updatedNeedConfirmMessage, setUpdatedNeedConfirmMessage] = useState("")
 
@@ -80,12 +81,6 @@ const Home: NextPage = () => {
     post()
   }, [activeNeed, hasActiveNeedChanged])
 
-  // HANDLERS
-  const handleOpenDetail = (need: Need) => {
-    setShowModal("detail")
-    setActiveNeed(need)
-  }
-
   const handleCloseDetail = () => {
     setShowModal("none")
   }
@@ -106,149 +101,48 @@ const Home: NextPage = () => {
       return
     }
 
-  // RENDER HELPERS
-  const renderAddState = (text?: string) => {
-    return (
-      <>
-        {text && <Text>{text}</Text>}
-        <Button onClick={() => setShowModal("add")}>Add</Button>
-      </>
-    )
-  }
-
-  const renderThanksButton = (
-    needId: string,
-    {
-      ownerId,
-      assigneeId,
-      fulfilledState,
-    }: {
-      ownerId: Need["ownerId"]
-      assigneeId: Need["assigneeId"]
-      fulfilledState: Need["fulfilledState"]
-    },
-  ) => {
-    const isNotOwnNeed = assigneeId && assigneeId !== ownerId
-    const isFulfilled = fulfilledState === "Fulfilled"
-
-    if (!isNotOwnNeed || !isFulfilled) {
-      return null
-    }
-
-    return (
-      <NextLink
-        href={{
-          pathname: "thanks/add",
-          query: { needId, aId: assigneeId },
-        }}
-        passHref
-      >
-        <Button as={Link}>Send some thanks</Button>
-      </NextLink>
-    )
-  }
-
+  // RENDER
   return (
-    <Container centerContent>
-      {isLoading && <Spinner />}
-      {!currentUser && (
-        <>
-          <Welcome />
-          <Text>Let&apos;s get you logged in.</Text>
-          <NextLink href="/auth" passHref>
-            <Link>Log in</Link>
-          </NextLink>
-        </>
-      )}
-      {loading && <Spinner />}
-      {error && (
-        <Text>Encountered an error loading the Needs data. Sorry!</Text>
-      )}
-      <Box>
-        {/* We are: -Loading, -Have no valid db reference, -Have a valid reference with no data */}
-        {(!snapshots || (snapshots && !snapshots.length)) &&
-          !loading &&
-          renderAddState(
-            "Looks like no needs have been added. Add your first one now!",
-          )}
-        {snapshots && snapshots.length && (
+    <Box bg="gray.50" w="100vw" h="100vh">
+      <Container centerContent w="100%">
+        {isLoading && <Spinner />}
+        {!currentUser && (
           <>
-            {renderAddState()}
-            <List>
-              {snapshots.map((snapshot) => {
-                if (!snapshot || !snapshot.key) {
-                  return null
-                }
-                const {
-                  name,
-                  description,
-                  fulfilledState,
-                  ownerId,
-                  assigneeId,
-                } = snapshot.val()
-                const key = snapshot.key
-                const need: Need = {
-                  name,
-                  description,
-                  fulfilledState,
-                  id: key,
-                  ownerId,
-                  assigneeId,
-                }
-
-                return (
-                  <ListItem
-                    key={key}
-                    onClick={() => handleOpenDetail(need)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <Stack spacing={3}>
-                      <Text>{name}</Text>
-                      <Text>{description}</Text>
-                      <Text>{fulfilledState}</Text>
-                      <Text>{assigneeId}</Text>
-                      <Text>{ownerId}</Text>
-                      {renderThanksButton(key, need)}
-                      {updatedNeedErrorMessage && (
-                        <Alert status="error">
-                          <AlertIcon />
-                          <AlertTitle>Update Error!</AlertTitle>
-                          <AlertDescription>
-                            {updatedNeedErrorMessage}
-                          </AlertDescription>
-                        </Alert>
-                      )}
-                      {/* currently triggering on all */}
-                      {updatedNeedConfirmMessage && (
-                        <Alert status="success">
-                          <AlertIcon />
-                          {updatedNeedConfirmMessage}
-                        </Alert>
-                      )}
-                    </Stack>
-                  </ListItem>
-                )
-              })}
-            </List>
+            <Welcome />
+            <Text>Let&apos;s get you logged in.</Text>
+            <NextLink href="/auth" passHref>
+              <Link>Log in</Link>
+            </NextLink>
           </>
         )}
-      </Box>
-      {currentUser && showModal === "add" && (
-        <AddNeedModal
-          userId={currentUser.id}
-          handleCloseModal={() => setShowModal("none")}
+        {loading && <Spinner />}
+        {error && (
+          <Text>Encountered an error loading the Needs data. Sorry!</Text>
+        )}
+        <NeedList
+          listSnapshots={[snapshots, loading, error]}
+          updatedNeedErrorMessage={updatedNeedErrorMessage}
+          updatedNeedConfirmMessage={updatedNeedConfirmMessage}
+          setActiveNeed={setActiveNeed}
+          setShowModal={setShowModal}
         />
-      )}
-      {currentUser && activeNeed && showModal === "detail" && (
-        <NeedDetail
-          userId={currentUser.id}
-          activeNeed={activeNeed}
-          userName={currentUser.name}
-          saveActiveNeed={handleSaveActiveNeed(activeNeed)}
-          handleCloseDetail={handleCloseDetail}
-        />
-      )}
-    </Container>
+        {currentUser && showModal === "add" && (
+          <AddNeedModal
+            userId={currentUser.id}
+            handleCloseModal={() => setShowModal("none")}
+          />
+        )}
+        {currentUser && activeNeed && showModal === "detail" && (
+          <NeedDetail
+            userId={currentUser.id}
+            activeNeed={activeNeed}
+            userName={currentUser.name}
+            saveActiveNeed={handleSaveActiveNeed(activeNeed)}
+            handleCloseDetail={handleCloseDetail}
+          />
+        )}
+      </Container>
+    </Box>
   )
 }
 
