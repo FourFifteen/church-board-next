@@ -50,6 +50,7 @@
     ],
     "prettier/prettier": "error",
     "react/react-in-jsx-scope": 0,
+    "react/prop-types": "never",
     "sort-imports": [
       "error",
       {
