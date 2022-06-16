@@ -1,4 +1,11 @@
-import { Button, Container, Stack, Text, Textarea } from "@chakra-ui/react"
+import {
+  Button,
+  Container,
+  Spinner,
+  Stack,
+  Text,
+  Textarea,
+} from "@chakra-ui/react"
 import type { NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
@@ -11,23 +18,46 @@ const AddThanksPage: NextPage = () => {
   const { currentUser, isLoading } = useAuth()
   const router = useRouter()
   const { needId, aId } = router.query
-  const [assigneeSnapshot, loading, error] = useGetPerson(aId)
+  const [assignee, loading, error] = useGetPerson("" + aId)
 
   if (!currentUser && !isLoading) {
     window.location.href = "/auth"
   }
 
+  // TODO: convert this to work with miscellaneous praise later.
   useEffect(() => {
     if (!message || !submitting) {
       return
     }
-  }, [message, currentUser, needId, submitting])
+    const fetcher = async () => {
+      await fetch("/api/thanks", {
+        method: "POST",
+        body: JSON.stringify({
+          message,
+          needId,
+          assigneeId: aId,
+          giverId: currentUser?.id,
+        }),
+      })
+    }
 
+    fetcher()
+  }, [aId, message, currentUser, needId, submitting])
+
+
+  if (error) {
+    return (
+      <Container centerContent>
+        <Text as="h2">Encountered an error {JSON.stringify(error)}</Text>
+      </Container>
+    )
+  }
   return (
     <Container centerContent>
+      {loading && <Spinner />}
       <Stack direction="column">
         <Text as="h1" fontSize="xl">
-          Send thanks to{" "}
+          Send thanks to {assignee.name}
         </Text>
         <Textarea
           placeholder="Thank God for meeting my needs through this person"

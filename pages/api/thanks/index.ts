@@ -8,10 +8,10 @@ export default async function handler(
   // ensure that we have an instance of the db
   const { setList } = FirebaseDocDatabaseService
   const method = req.method
-  const { needId, ownerId, assigneeId, message } = JSON.parse(req.body)
+  const { needId, giverId, assigneeId, message } = JSON.parse(req.body)
 
   if (method === "POST") {
-    if (!needId || !ownerId) {
+    if (!needId || !giverId) {
       return res
         .status(400)
         .json({ error: "Bad request. missing need ID or assignee ID" })
@@ -19,10 +19,16 @@ export default async function handler(
 
     const thanks = {
       needId,
-      ownerId,
+      giverId,
       assigneeId,
       message,
     }
+
+    console.log("posting Thanks!")
+    console.log(needId)
+    console.log(giverId)
+    console.log(assigneeId)
+    console.log(message)
 
     await setList("thanks", thanks)
     res.status(200).json({ data: thanks })
