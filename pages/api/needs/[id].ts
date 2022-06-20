@@ -1,9 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { FirebaseDocDatabaseService } from '../../../adapters/firebase-database'
-import { Need, NeedData } from '../../../types'
-import { sendNeedsResponse } from '../../../utils/needs'
+import { NextApiRequest, NextApiResponse } from "next"
+import { FirebaseDocDatabaseService } from "../../../adapters/firebase-database"
+import { Need, NeedData } from "../../../types"
+import { sendNeedsResponse } from "../../../utils/needs"
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   // ensure that we have an instance of the db
   const { setListFromRef, getTableRef } = FirebaseDocDatabaseService
   const method = req.method
@@ -15,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     assigneeId: need.assigneeId,
     fulfilledState: need.fulfilledState,
     description: need.description,
-    ownerId: need.ownerId
+    ownerId: need.ownerId,
   }
   if (method === "PATCH") {
     const needRef = getTableRef("needs/" + need.id)
@@ -25,4 +28,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     needsResponseMessages(400)()
   }
 }
-

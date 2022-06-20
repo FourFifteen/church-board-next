@@ -9,7 +9,7 @@ import {
   ModalOverlay,
   Tag,
   TagLabel,
-  TagLeftIcon
+  TagLeftIcon,
 } from "@chakra-ui/react"
 import React, { useRef, useState } from "react"
 import { Need, User, UserID } from "../types"
@@ -27,16 +27,18 @@ const FULFILLED_STATES: Need["fulfilledState"][] = [
   "Assigned",
   "In Progress",
   "Fulfilled",
-  "N/A"
+  "N/A",
 ]
 
 const NeedDetail: React.FC<NeedDetailProps> = ({
   userId,
   activeNeed,
   saveActiveNeed,
-  handleCloseDetail
+  handleCloseDetail,
 }) => {
-  const [activeFulfilledState, setActiveFulfilledState] = useState(activeNeed?.fulfilledState)
+  const [activeFulfilledState, setActiveFulfilledState] = useState(
+    activeNeed?.fulfilledState,
+  )
   // use this to change the primary action text for the modal.
   // i.e. from "Close" to "Save changes"
   const hasChangedRef = useRef(false)
@@ -59,9 +61,11 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
 
   const updateFulfilledState = (existingState: Need["fulfilledState"]) => {
     // only assignees can say "I'm working on this"
-    const isAssigneeOnlyState = existingState === "Assigned" || existingState === "In Progress"
-    // only owners can mark a Need fulfilled or no longer needed 
-    const isOwnerOnlyState = existingState === "Fulfilled" || existingState === "N/A"
+    const isAssigneeOnlyState =
+      existingState === "Assigned" || existingState === "In Progress"
+    // only owners can mark a Need fulfilled or no longer needed
+    const isOwnerOnlyState =
+      existingState === "Fulfilled" || existingState === "N/A"
 
     if (IN_VIEW_ONLY_MODE) {
       return existingState
@@ -84,9 +88,7 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
   }
 
   const handleFulfilledStateClick = () => {
-    setActiveFulfilledState(
-      updateFulfilledState(activeFulfilledState)
-    )
+    setActiveFulfilledState(updateFulfilledState(activeFulfilledState))
     hasChangedRef.current = true // writing to this each time won't ever be a performance issue
   }
 
@@ -94,7 +96,7 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
     saveActiveNeed({
       ...activeNeed,
       fulfilledState: activeFulfilledState,
-      assigneeId: IN_EDIT_MODE ? "" + userId : activeNeed.assigneeId
+      assigneeId: IN_EDIT_MODE ? "" + userId : activeNeed.assigneeId,
     })
     closeHandler()
   }
@@ -107,21 +109,27 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
         <ModalHeader>{name}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Tag onClick={handleFulfilledStateClick} style={{ cursor: "pointer" }}>
+          <Tag
+            onClick={handleFulfilledStateClick}
+            style={{ cursor: "pointer" }}
+          >
             <TagLeftIcon />
             <TagLabel>{activeFulfilledState}</TagLabel>
           </Tag>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleSaveClick(handleCloseDetail)}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={handleSaveClick(handleCloseDetail)}
+          >
             {hasChangedRef.current ? "Save changes" : "Close"}
           </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
   )
-
 }
 
 export default NeedDetail

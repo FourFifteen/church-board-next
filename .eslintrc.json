@@ -1,16 +1,61 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "eslint:recommended"
-  ],
+  "parser": "@typescript-eslint/parser",
   "plugins": [
-    "jsx-a11y"
+    "@typescript-eslint",
+    "react",
+    "@next/next"
   ],
+  "extends": [
+    "react-app",
+    "eslint:recommended",
+    "plugin:import/typescript",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:@next/next/recommended"
+  ],
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jest": true,
+    "node": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "rules": {
-    "max-len": [
-      2,
-      100,
-      2
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "import/export": "error",
+    "import/newline-after-import": "error",
+    "import/no-anonymous-default-export": "off",
+    "import/no-duplicates": "error",
+    "import/no-useless-path-segments": "error",
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc"
+        },
+        "newlines-between": "never"
+      }
+    ],
+    "prettier/prettier": "error",
+    "react/react-in-jsx-scope": 0,
+    "react/prop-types": "never",
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
     ]
   }
 }
