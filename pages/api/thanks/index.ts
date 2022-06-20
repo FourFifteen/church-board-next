@@ -24,12 +24,6 @@ export default async function handler(
       message,
     }
 
-    console.log("posting Thanks!")
-    console.log(needId)
-    console.log(giverId)
-    console.log(assigneeId)
-    console.log(message)
-
     await setList("thanks", thanks)
     res.status(200).json({ data: thanks })
   } else {

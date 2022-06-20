@@ -18,8 +18,6 @@ export default async function hander(
     }
     const user = snapshot.val()
     const id = user.id
-    console.log("snapshot id", id)
-    console.log("existingId", existingUserId)
     return id === existingUserId
   }
 
@@ -31,7 +29,6 @@ export default async function hander(
   const setUserIfNew = async () => {
     const { id, email, name, photoURL }: User = JSON.parse(req.body)
     const doesUserExist = await checkUserExists(id)
-    console.log(doesUserExist)
 
     if (doesUserExist) {
       return res.status(200).json({ data: { id, email, name, photoURL } })

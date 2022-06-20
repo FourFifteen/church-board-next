@@ -11,10 +11,8 @@ import {
   Text
 } from "@chakra-ui/react"
 import NextLink from "next/link"
-import { useEffect, useState } from "react"
 import { useGetPerson } from "../hooks/useGetPerson"
-import { Need, NEED_MODAL_DISPLAY_STATES, User } from "../types"
-import { generateEmptyUser } from "../utils/generateEmptyUser"
+import { Need, NEED_MODAL_DISPLAY_STATES } from "../types"
 
 type NeedListItemProps = {
   need: Need
@@ -53,11 +51,9 @@ const NeedListItem: React.FC<NeedListItemProps> = ({
   const renderThanksButton = (
     needId: string,
     {
-      ownerId,
       assigneeId,
       fulfilledState,
     }: {
-      ownerId: Need["ownerId"]
       assigneeId: Need["assigneeId"]
       fulfilledState: Need["fulfilledState"]
     },
@@ -66,7 +62,7 @@ const NeedListItem: React.FC<NeedListItemProps> = ({
     const isFulfilled = fulfilledState === "Fulfilled"
 
     if (isFulfilled) {
-      // if (!isNotOwnNeed || !isFulfilled) {
+      // if (!isNotOwnNeed || isFulfilled) {
       return null
     }
 
@@ -83,7 +79,7 @@ const NeedListItem: React.FC<NeedListItemProps> = ({
     )
   }
 
-  const renderError = (condition: boolean, title = "Error!", message = "Encountered an error") => (
+  const renderError = (condition = true, title = "Error!", message = "Encountered an error") => (
     <>
       {condition && (
         <Alert status="error">
@@ -112,8 +108,8 @@ const NeedListItem: React.FC<NeedListItemProps> = ({
         <Text>{name}</Text>
         <Text>{description}</Text>
         <Text>{fulfilledState}</Text>
-        <Text>{assignee.name}</Text>
-        <Text>{owner.name}</Text>
+        <Text>{assignee?.name}</Text>
+        <Text>{owner?.name}</Text>
         {renderThanksButton("" + id, need)}
         {renderError(Boolean(assigneeError), "Update Error!", "Failed to get Assignee data")}
         {renderError(Boolean(ownerError), "Update Error!", "Failed to get Owner data")}

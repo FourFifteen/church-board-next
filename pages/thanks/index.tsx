@@ -10,16 +10,12 @@ import {
 import { NextPage } from "next"
 import { RiUser5Fill } from "react-icons/ri"
 import { useDBServiceList } from "../../adapters/firebase-database"
-import { useAuth } from "../../services/auth"
+import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth"
 import { Thanks } from "../../types/entities/Thanks"
 
 const ThanksPage: NextPage = () => {
-  const { currentUser, isLoading } = useAuth()
+  const { isLoading } = useProtectedRouteAuth()
   const [snapshots, loading, error] = useDBServiceList("thanks")
-
-  if (!currentUser && !isLoading) {
-    window.location.href = "/auth"
-  }
 
   return (
     <Container centerContent>

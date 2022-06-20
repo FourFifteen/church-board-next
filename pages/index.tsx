@@ -21,7 +21,6 @@ import {
   NEED_MODAL_DISPLAY_STATES,
   Need,
   NeedData,
-  User,
   UserID,
 } from "../types"
 

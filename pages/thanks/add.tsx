@@ -10,19 +10,16 @@ import type { NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useGetPerson } from "../../hooks/useGetPerson"
-import { useAuth } from "../../services/auth"
+import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth"
 
 const AddThanksPage: NextPage = () => {
   const [message, setMessage] = useState("")
   const [submitting, setSubmitting] = useState(false)
-  const { currentUser, isLoading } = useAuth()
+  const [isSending, setIsSending] = useState(false)
+  const { currentUser } = useProtectedRouteAuth()
   const router = useRouter()
   const { needId, aId } = router.query
   const [assignee, loading, error] = useGetPerson("" + aId)
-
-  if (!currentUser && !isLoading) {
-    window.location.href = "/auth"
-  }
 
   // TODO: convert this to work with miscellaneous praise later.
   useEffect(() => {
@@ -30,7 +27,8 @@ const AddThanksPage: NextPage = () => {
       return
     }
     const fetcher = async () => {
-      await fetch("/api/thanks", {
+      setIsSending(true)
+      const response = await fetch("/api/thanks", {
         method: "POST",
         body: JSON.stringify({
           message,
@@ -39,6 +37,15 @@ const AddThanksPage: NextPage = () => {
           giverId: currentUser?.id,
         }),
       })
+      if (response.status < 300 && response.status > 199) {
+        setIsSending(false)
+      }
+      const body = await response.json()
+
+      if (!isSending && message && body) {
+        router.push("/thanks")
+      }
+      // TODO: redirect on success. Then come back later and add some celebration or something
     }
 
     fetcher()
@@ -56,16 +63,18 @@ const AddThanksPage: NextPage = () => {
     <Container centerContent>
       {loading && <Spinner />}
       <Stack direction="column">
-        <Text as="h1" fontSize="xl">
-          Send thanks to {assignee.name}
-        </Text>
+        {assignee && (
+          < Text as="h1" fontSize="xl">
+            Send thanks to {assignee.name}
+          </Text>
+        )}
         <Textarea
           placeholder="Thank God for meeting my needs through this person"
           onChange={(e) => setMessage(e.target.value)}
         />
         <Button onClick={() => setSubmitting(true)}>Submit</Button>
       </Stack>
-    </Container>
+    </Container >
   )
 }
 
