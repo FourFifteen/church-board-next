@@ -1,27 +1,34 @@
-import { ChakraProvider } from "@chakra-ui/react"
-import type { AppProps } from "next/app"
+import { ChakraProvider, Spinner } from "@chakra-ui/react"
 import { FirebaseAuthService } from "../adapters/firebase-auth"
 import { FirebaseDocDatabaseService } from "../adapters/firebase-database"
-import { makeAuthContextProvider } from "../services/auth"
+import { makeAuthContextProvider, useAuth } from "../services/auth"
 import { makeDatabaseContextProvider } from "../services/database"
-import "../styles/globals.css"
 
-function App({ Component, pageProps }: AppProps) {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const AuthProvider = makeAuthContextProvider(FirebaseAuthService)
   const DatabaseProvider = makeDatabaseContextProvider(
     FirebaseDocDatabaseService,
   )
 
-  // My gut says that order matters here. It makes sense that we should have Auth before Database.
   return (
     <ChakraProvider>
       <AuthProvider>
         <DatabaseProvider>
-          <Component {...pageProps} />
+          {children}
         </DatabaseProvider>
       </AuthProvider>
     </ChakraProvider>
   )
 }
 
-export default App
+export default Layout
+
+const GlobalNav = () => {
+  const { currentUser, isLoading } = useAuth()
+
+  if (isLoading) {
+    return <Spinner />
+  }
+
+  return
+}
