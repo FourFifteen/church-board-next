@@ -8,6 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { NextPage } from "next"
+import { useRouter } from "next/router"
 import { FC, useEffect } from "react"
 import { RiAtFill, RiFacebookCircleFill, RiGoogleFill } from "react-icons/ri"
 import { AuthProviders, useAuth } from "../../services/auth"
@@ -16,6 +17,8 @@ type SignInOptions = { provider: AuthProviders; icon: As; text?: string }
 
 const AuthPage: NextPage = () => {
   const { isLoading, currentUser } = useAuth()
+  const router = useRouter()
+  const redirectUrl = router.query.r
 
   useEffect(() => {
     const fetcher = async () => {
@@ -23,7 +26,9 @@ const AuthPage: NextPage = () => {
         method: "POST",
         body: JSON.stringify(currentUser),
       })
-      window.location.href = "/"
+      router.push(
+        typeof redirectUrl === "string" ? redirectUrl : "/"
+      )
     }
     if (currentUser) {
       console.log("hello world")
