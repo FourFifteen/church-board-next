@@ -13,12 +13,14 @@ import {
 import { RiCheckFill, RiCloseFill } from "react-icons/ri"
 
 type EditableWithButtonProps = {
+  name: string
   defaultValue?: string
   type?: "email" | "text" | "textarea"
 }
 
 const EditableWithButton = ({
   defaultValue = "",
+  name,
   type = "text"
 }: EditableWithButtonProps) => {
   return (
@@ -39,7 +41,15 @@ const EditableWithButton = ({
           bg={useColorModeValue("gray.50", "gray.700")}
         />
       </Tooltip>
-      <Input py={2} px={4} as={EditableInput} type={type} w="full" minWidth="full" />
+      <Input
+        py={2}
+        px={4}
+        as={EditableInput}
+        type={type}
+        w="full"
+        name={name}
+        id={name}
+      />
       <EditableControls />
     </Editable>
   )

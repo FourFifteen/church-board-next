@@ -7,25 +7,40 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const method = req.method
-  if (method !== "GET") {
-    return res
-      .status(405)
-      .json({ error: "This endpoint supports GET requests only" })
-  }
-
-  // get the User as a DB ref
+  // get the user ID from the query params
   const id = req.query.id
-  if (id instanceof Array) {
-    // get multiple users
-    const users: User[] = []
 
-    for (const val of id) {
-      users.push(await getUser(val))
+  if (method === "GET") {
+    if (id instanceof Array) {
+      // get multiple users
+      const users: User[] = []
+
+      for (const val of id) {
+        users.push(await getUser(val))
+      }
+      res.status(200).json({ data: users })
     }
-    res.status(200).json({ data: users })
+    const user: User = await getUser("" + id)
+    return res.status(200).json({ data: [user] })
+  } else if (method === "PATCH") {
+
+    if (!id || id instanceof Array) {
+      return res.status(400).json({ error: "Sorry, updating more than one user at a time is prohibitted." })
+    }
+
+    const { setValFromRef, getTableRef } = FirebaseDocDatabaseService
+
+    await setValFromRef(
+      getTableRef("users/" + id),
+      JSON.parse(req.body)
+    )
+
   }
-  const user: User = await getUser("" + id)
-  res.status(200).json({ data: [user] })
+
+
+  return res
+    .status(405)
+    .json({ error: "This endpoint supports GET or PATCH requests only" })
 }
 
 const getUser = async (id: User["id"]) => {
@@ -34,3 +49,4 @@ const getUser = async (id: User["id"]) => {
   const snapshot = await getValFromRef(ref)
   return snapshot.val()
 }
+

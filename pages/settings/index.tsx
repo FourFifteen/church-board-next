@@ -4,18 +4,23 @@ import {
   Grid,
   GridItem,
   Heading,
-  HStack,
   Stack,
   Text,
   useColorMode,
-  useColorModeValue
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth";
-import { RiMoonClearFill, RiSunFill } from "react-icons/ri";
+import { RiImageAddFill, RiMoonClearFill, RiSunFill } from "react-icons/ri";
 import EditableWithButton from "../../components/themed/EditableWithButton";
-import { useMemo } from "react";
+import FileUpload from "../../components/themed/FileUpload";
+import HookFormControl from "../../components/themed/HookFormControl";
+import { FieldError, SubmitHandler, useForm } from "react-hook-form";
 
+type UpdateUserInputs = {
+  name: string
+  email: string
+  photoURL: unknown
+}
 
 // I'll need to make this separate at some point...
 const THEME_ICON_MAP = {
@@ -26,17 +31,28 @@ const THEME_ICON_MAP = {
 const SettingsIndexPage: NextPage = () => {
   const { currentUser } = useProtectedRouteAuth()
   const { colorMode, toggleColorMode } = useColorMode()
+  const { register, handleSubmit, formState } = useForm<UpdateUserInputs>()
 
-  const [
-    defaultName,
-    defaultEmail,
-    defaultPhotoURL
-  ] = useMemo(() => [
-    currentUser?.name ?? "name",
-    currentUser?.email ?? "email@example.com",
-    currentUser?.photoURL ?? "photoURL",
-  ], [currentUser])
+  const {
+    name: nameErrors,
+    email: emailErrors,
+    photoURL: photoErrors
+  } = formState.errors
 
+  const postUserSettings: SubmitHandler<UpdateUserInputs> = async (formData) => {
+    if (!currentUser) {
+      return
+    }
+    const response = await fetch("api/users/" + currentUser.id, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json"
+      },
+      body: JSON.stringify(formData)
+    })
+    const data = response.json()
+    console.log(data)
+  }
 
   return (
     <Container>
@@ -49,27 +65,42 @@ const SettingsIndexPage: NextPage = () => {
         <Heading as="h1">Settings</Heading>
         <Text>Here&apos;s where you can review and update your profile settings.</Text>
       </Stack>
-      <Grid
-        templateColumns={["2fr 1fr", "1fr"]}
-      >
-        <GridItem w="full">
-          <Stack
-            spacing="6"
-            w="full"
-          >
-            <EditableWithButton defaultValue={defaultName} />
-            <EditableWithButton defaultValue={defaultEmail} type="email" />
-            <EditableWithButton defaultValue={defaultPhotoURL} type="textarea" />
-          </Stack>
-        </GridItem>
-        <GridItem ml={[6, 0]} mt={[0, 6]}>
-          <Button onClick={toggleColorMode} id="colormode" colorScheme="teal" variant="outline">
-            {THEME_ICON_MAP[colorMode]}
-          </Button>
-        </GridItem>
-      </Grid>
+      {currentUser && (
+
+        <Grid
+          templateColumns={["2fr 1fr", "1fr"]}
+        >
+          <GridItem w="full">
+            <form onSubmit={handleSubmit(postUserSettings)}>
+              <Stack
+                spacing="6"
+                w="full"
+              >
+                <HookFormControl error={nameErrors} label="Name">
+                  <EditableWithButton defaultValue={currentUser.name} {...register("name")} />
+                </HookFormControl>
+                <HookFormControl error={emailErrors} label="Email">
+                  <EditableWithButton defaultValue={currentUser.email} type="email" {...register("email")} />
+                </HookFormControl>
+                <HookFormControl error={photoErrors as FieldError | undefined} label="Profile Photo">
+                  <FileUpload accept="image/*" {...register("photoURL")}>
+                    <Button leftIcon={<RiImageAddFill />}>Upload Proile Image</Button>
+                  </FileUpload>
+                </HookFormControl>
+                <Button colorScheme="teal" variant="solid" type="submit">Save changes</Button>
+              </Stack>
+            </form>
+          </GridItem>
+          <GridItem ml={[6, 0]} mt={[0, 6]}>
+            <Button onClick={toggleColorMode} id="colormode" colorScheme="teal" variant="outline">
+              {THEME_ICON_MAP[colorMode]}
+            </Button>
+          </GridItem>
+        </Grid>
+      )}
     </Container >
   )
 }
 
 export default SettingsIndexPage
+
