@@ -1,10 +1,17 @@
-import { Avatar, Box, Center, ChakraProvider, Spinner, Stack } from "@chakra-ui/react"
+import {
+  Avatar,
+  Box,
+  Center,
+  ChakraProvider,
+  Spinner,
+  Stack,
+} from "@chakra-ui/react"
+import { RiUser3Fill } from "react-icons/ri"
 import { FirebaseAuthService } from "../adapters/firebase-auth"
 import { FirebaseDocDatabaseService } from "../adapters/firebase-database"
 import { makeAuthContextProvider, useAuth } from "../services/auth"
 import { makeDatabaseContextProvider } from "../services/database"
-import { RiUser3Fill } from "react-icons/ri"
-import { Link } from './themed/Link'
+import { Link } from "./themed/Link"
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const AuthProvider = makeAuthContextProvider(FirebaseAuthService)
@@ -37,7 +44,12 @@ const GlobalNav = () => {
 
   return (
     <Center>
-      <Stack as="nav" justify="space-around" direction="row" alignItems="center">
+      <Stack
+        as="nav"
+        justify="space-around"
+        direction="row"
+        alignItems="center"
+      >
         <Box bg="red.50" />
         <Stack direction="row">
           <Link href="/">Home</Link>
@@ -49,6 +61,7 @@ const GlobalNav = () => {
             src={currentUser?.photoURL}
             icon={<RiUser3Fill />}
             bg="purple.200"
+            referrerPolicy="no-referrer"
           />
         </Link>
       </Stack>
