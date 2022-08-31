@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Button,
   Container,
@@ -94,7 +95,6 @@ const SettingsIndexPage: NextPage = () => {
                   label="Profile Photo"
                 >
                   <FileUpload
-                    accept="image/*"
                     control={control as unknown as Control<FieldValues, any>}
                     name="photoURL"
                     label="Profile Photo"
