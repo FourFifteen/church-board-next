@@ -6,20 +6,20 @@ import {
   Heading,
   Stack,
   Text,
-  useColorMode,
+  useColorMode
 } from "@chakra-ui/react";
 import { NextPage } from "next";
-import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth";
+import { Control, FieldError, FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiImageAddFill, RiMoonClearFill, RiSunFill } from "react-icons/ri";
 import EditableWithButton from "../../components/themed/EditableWithButton";
 import FileUpload from "../../components/themed/FileUpload";
 import HookFormControl from "../../components/themed/HookFormControl";
-import { FieldError, SubmitHandler, useForm } from "react-hook-form";
+import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth";
 
-type UpdateUserInputs = {
+export type UpdateUserInputs = {
   name: string
   email: string
-  photoURL: unknown
+  photoURL: FileList
 }
 
 // I'll need to make this separate at some point...
@@ -31,7 +31,7 @@ const THEME_ICON_MAP = {
 const SettingsIndexPage: NextPage = () => {
   const { currentUser } = useProtectedRouteAuth()
   const { colorMode, toggleColorMode } = useColorMode()
-  const { register, handleSubmit, formState } = useForm<UpdateUserInputs>()
+  const { register, handleSubmit, formState, control } = useForm<UpdateUserInputs>()
 
   const {
     name: nameErrors,
@@ -83,8 +83,8 @@ const SettingsIndexPage: NextPage = () => {
                   <EditableWithButton defaultValue={currentUser.email} type="email" {...register("email")} />
                 </HookFormControl>
                 <HookFormControl error={photoErrors as FieldError | undefined} label="Profile Photo">
-                  <FileUpload accept="image/*" {...register("photoURL")}>
-                    <Button leftIcon={<RiImageAddFill />}>Upload Proile Image</Button>
+                  <FileUpload accept="image/*" control={control as unknown as Control<FieldValues, any>} name="photoURL" label="Profile Photo">
+                    <Button leftIcon={<RiImageAddFill />}>Upload Profile Image</Button>
                   </FileUpload>
                 </HookFormControl>
                 <Button colorScheme="teal" variant="solid" type="submit">Save changes</Button>
