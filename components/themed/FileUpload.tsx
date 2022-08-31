@@ -2,32 +2,40 @@ import {
   Box,
   Button,
   ButtonGroup,
+  FormControl,
+  FormLabel,
   Icon,
   Stack,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react"
 import { ReactNode, useCallback, useEffect, useState } from "react"
-import { useDropzone } from "react-dropzone"
+import { Accept, useDropzone } from "react-dropzone"
 import { useController, UseControllerProps, useForm } from "react-hook-form"
 import { RiImageAddFill } from "react-icons/ri"
 
 interface FileUploadProps extends UseControllerProps {
-  accept?: string
+  accept?: Accept
   children?: ReactNode
-  multiple?: boolean
+  maxFiles?: number
   mode?: "update"
   label: string
+  helperText?: string
 }
 
 const FileUpload = (props: FileUploadProps) => {
   const {
-    accept,
+    accept = {
+      "image/png": [".png"],
+      "image/jpeg": [".jpg", ".jpeg"],
+      "image/gif": [".gif"],
+    },
     children,
-    multiple = false,
+    maxFiles = 1,
     name,
     label,
     mode = "update",
+    helperText = "Drag and drop to upload your profile image.",
   } = props
   const { field } = useController(props)
   const { register, unregister, setValue, watch } = useForm()
@@ -46,14 +54,12 @@ const FileUpload = (props: FileUploadProps) => {
 
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
-    accept: {
-      "image/png": [".png"],
-      "image/jpeg": ["jpeg"],
-    },
+    accept,
     maxSize: 10000000,
     onDropAccepted: (accepted) => {
       setAcceptedFile(accepted)
     },
+    maxFiles,
   })
 
   const updatePhoto = () => {
@@ -72,48 +78,43 @@ const FileUpload = (props: FileUploadProps) => {
     }
   }, [register, unregister, name])
 
-  // return (
-  //   <InputGroup onClick={handleClick}>
-  //     <input
-  //       type="file"
-  //       hidden
-  //       accept={accept}
-  //       multiple={multiple}
-  //       ref={(e) => {
-  //         ref(e)
-  //         inputRef.current = e
-  //       }}
-  //       {...rest}
-  //     />
-  //     <>
-  //       {children}
-  //     </>
-  //   </InputGroup>
-  // )
+  const DefaultFileButtons = () => (
+    <>
+      <input id={"" + name} {...field} {...getInputProps()} />
+      <Text>{helperText}</Text>
+    </>
+  )
+
   return (
     <Box>
-      <Stack spacing={2} direction="row">
+      <Stack spacing={2} direction="row" alignItems="center">
         <Box
           {...getRootProps()}
           border="2px"
+          padding={4}
+          borderRadius="md"
           borderColor={useColorModeValue("gray.300", "gray.500")}
-          backgroundColor={useColorModeValue("gray.200", "gray.600")}
+          backgroundColor={useColorModeValue("gray.100", "gray.700")}
         >
-          <input id={"" + name} {...field} {...getInputProps()} />
-          <Text>Drag and drop to upload your profile image.</Text>
+          {children || <DefaultFileButtons />}
         </Box>
         <ButtonGroup spacing={2}>
           <Button onClick={updatePhoto}>Upload</Button>
-          <Button onClick={removePhoto}>Remove</Button>
+          {acceptedFile.length > 0 && (
+            <Button onClick={removePhoto}>Remove</Button>
+          )}
         </ButtonGroup>
       </Stack>
       {acceptedFile[0] && (
-        <FileInfo
-          name={acceptedFile[0]?.name}
-          id={"" + name}
-          onUpdate={updatePhoto}
-          onRemove={removePhoto}
-        />
+        <FormControl>
+          <FormLabel>{label}</FormLabel>
+          <FileInfo
+            name={acceptedFile[0]?.name}
+            id={"" + name}
+            onUpdate={updatePhoto}
+            onRemove={removePhoto}
+          />
+        </FormControl>
       )}
     </Box>
   )
@@ -131,10 +132,14 @@ const FileInfo = ({ id, name, onUpdate, onRemove }: FileInfoProps) => (
   <Stack
     direction="row"
     border="2px"
+    borderRadius="md"
+    padding={2}
+    justifyContent="space-between"
+    alignItems="center"
     borderColor={useColorModeValue("gray.200", "gray.600")}
     id={id}
   >
-    <Stack>
+    <Stack direction="row" alignItems="center">
       <Icon as={RiImageAddFill} />
       <Text>{name}</Text>
     </Stack>
