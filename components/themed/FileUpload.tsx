@@ -26,9 +26,7 @@ interface FileUploadProps extends UseControllerProps {
 const FileUpload = (props: FileUploadProps) => {
   const {
     accept = {
-      "image/png": [".png"],
-      "image/jpeg": [".jpg", ".jpeg"],
-      "image/gif": [".gif"],
+      "image/*": [".png", ".gif", ".jpeg", ".jpg"],
     },
     children,
     maxFiles = 1,
@@ -90,8 +88,8 @@ const FileUpload = (props: FileUploadProps) => {
       <Stack spacing={2} direction="row" alignItems="center">
         <Box
           {...getRootProps()}
-          border="2px"
-          padding={4}
+          border="1px"
+          padding={2}
           borderRadius="md"
           borderColor={useColorModeValue("gray.300", "gray.500")}
           backgroundColor={useColorModeValue("gray.100", "gray.700")}
