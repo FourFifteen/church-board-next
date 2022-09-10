@@ -1,3 +1,4 @@
+import prop from "lodash/fp/prop"
 import { NextApiRequest, NextApiResponse } from "next"
 import { FirebaseDocDatabaseService } from "../../../adapters/firebase-database"
 import { User } from "../../../types"
@@ -9,7 +10,8 @@ export default async function handler(
   const method = req.method
   // get the user ID from the query params
   const id = req.query.id
-
+  console.log("USERID", id)
+  console.log("BODY:", req.body)
   if (method === "GET") {
     if (id instanceof Array) {
       // get multiple users
@@ -31,7 +33,11 @@ export default async function handler(
 
     const { setValFromRef, getTableRef } = FirebaseDocDatabaseService
 
-    await setValFromRef(getTableRef("users/" + id), JSON.parse(req.body))
+    await setValFromRef(
+      getTableRef("users/" + id),
+      JSON.parse(prop(["id", "name", "email"])(req.body)),
+    )
+    return res.status(200).json({ data: { message: `User ${id} patched` } })
   }
 
   return res
