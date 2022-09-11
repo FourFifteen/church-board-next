@@ -1,5 +1,4 @@
 import {
-  Box,
   ButtonGroup,
   Editable,
   EditableInput,
@@ -8,7 +7,7 @@ import {
   Input,
   Tooltip,
   useColorModeValue,
-  useEditableControls
+  useEditableControls,
 } from "@chakra-ui/react"
 import { RiCheckFill, RiCloseFill } from "react-icons/ri"
 
@@ -21,10 +20,9 @@ type EditableWithButtonProps = {
 const EditableWithButton = ({
   defaultValue = "",
   name,
-  type = "text"
+  type = "text",
 }: EditableWithButtonProps) => {
   return (
-
     <Editable
       defaultValue={defaultValue}
       isPreviewFocusable={true}
@@ -36,7 +34,7 @@ const EditableWithButton = ({
           py={2}
           px={4}
           _hover={{
-            background: useColorModeValue("gray.100", "gray.600")
+            background: useColorModeValue("gray.100", "gray.600"),
           }}
           bg={useColorModeValue("gray.50", "gray.700")}
         />
@@ -58,17 +56,21 @@ const EditableWithButton = ({
 export default EditableWithButton
 
 const EditableControls = () => {
-  const {
-    isEditing,
-    getSubmitButtonProps,
-    getCancelButtonProps,
-  } = useEditableControls()
+  const { isEditing, getSubmitButtonProps, getCancelButtonProps } =
+    useEditableControls()
 
   return isEditing ? (
     <ButtonGroup justifyContent="end" size="sm" w="full" spacing={2} mt={2}>
-      <IconButton icon={<RiCheckFill />} aria-label="confirm" {...getSubmitButtonProps()} />
-      <IconButton icon={<RiCloseFill />} aria-label="cancel" {...getCancelButtonProps()} />
+      <IconButton
+        icon={<RiCheckFill />}
+        aria-label="confirm"
+        {...getSubmitButtonProps()}
+      />
+      <IconButton
+        icon={<RiCloseFill />}
+        aria-label="cancel"
+        {...getCancelButtonProps()}
+      />
     </ButtonGroup>
   ) : null
-
 }

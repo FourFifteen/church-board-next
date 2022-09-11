@@ -11,13 +11,13 @@ import {
 } from "@chakra-ui/react"
 import { NextPage } from "next"
 import {
-  Control,
+  Controller,
+  ControllerRenderProps,
   FieldError,
-  FieldValues,
   SubmitHandler,
   useForm,
 } from "react-hook-form"
-import { RiImageAddFill, RiMoonClearFill, RiSunFill } from "react-icons/ri"
+import { RiMoonClearFill, RiSunFill } from "react-icons/ri"
 import EditableWithButton from "../../components/themed/EditableWithButton"
 import FileUpload from "../../components/themed/FileUpload"
 import HookFormControl from "../../components/themed/HookFormControl"
@@ -29,6 +29,9 @@ export type UpdateUserInputs = {
   photoURL: FileList
 }
 
+export type UpdateUserControls<T extends keyof UpdateUserInputs> =
+  ControllerRenderProps<UpdateUserInputs, T>
+
 // I'll need to make this separate at some point...
 const THEME_ICON_MAP = {
   dark: <RiMoonClearFill />,
@@ -38,8 +41,7 @@ const THEME_ICON_MAP = {
 const SettingsIndexPage: NextPage = () => {
   const { currentUser } = useProtectedRouteAuth()
   const { colorMode, toggleColorMode } = useColorMode()
-  const { register, handleSubmit, formState, control } =
-    useForm<UpdateUserInputs>()
+  const { handleSubmit, formState, control } = useForm<UpdateUserInputs>()
 
   const {
     name: nameErrors,
@@ -77,32 +79,30 @@ const SettingsIndexPage: NextPage = () => {
           <GridItem w="full">
             <form onSubmit={handleSubmit(postUserSettings)}>
               <Stack spacing="6" w="full">
-                <HookFormControl error={nameErrors} label="Name">
-                  <EditableWithButton
-                    defaultValue={currentUser.name}
-                    {...register("name")}
-                  />
-                </HookFormControl>
-                <HookFormControl error={emailErrors} label="Email">
-                  <EditableWithButton
-                    defaultValue={currentUser.email}
-                    type="email"
-                    {...register("email")}
-                  />
-                </HookFormControl>
+                <HookFormControl
+                  Input={EditableWithButton}
+                  error={nameErrors}
+                  label="Name"
+                  name="name"
+                ></HookFormControl>
+                <HookFormControl
+                  Input={EditableWithButton}
+                  error={emailErrors}
+                  label="Email"
+                  name="email"
+                ></HookFormControl>
                 <HookFormControl
                   error={photoErrors as FieldError | undefined}
                   label="Profile Photo"
+                  name="photoURL"
                 >
-                  <FileUpload
-                    control={control as unknown as Control<FieldValues, any>}
+                  <Controller
                     name="photoURL"
-                    label="Profile Photo"
-                  >
-                    <Button leftIcon={<RiImageAddFill />}>
-                      Upload Profile Image
-                    </Button>
-                  </FileUpload>
+                    control={control}
+                    render={({ field }) => (
+                      <FileUpload label="Profile Photo" {...field} />
+                    )}
+                  />
                 </HookFormControl>
                 <Button colorScheme="teal" variant="solid" type="submit">
                   Save changes

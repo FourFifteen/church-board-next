@@ -11,10 +11,11 @@ import {
 } from "@chakra-ui/react"
 import { ReactNode, useCallback, useEffect, useState } from "react"
 import { Accept, useDropzone } from "react-dropzone"
-import { useController, UseControllerProps, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { RiImageAddFill } from "react-icons/ri"
+import { UpdateUserControls } from "../../pages/settings"
 
-interface FileUploadProps extends UseControllerProps {
+interface FileUploadProps extends UpdateUserControls<"photoURL"> {
   accept?: Accept
   children?: ReactNode
   maxFiles?: number
@@ -35,7 +36,6 @@ const FileUpload = (props: FileUploadProps) => {
     mode = "update",
     helperText = "Drag and drop to upload your profile image.",
   } = props
-  const { field } = useController(props)
   const { register, unregister, setValue, watch } = useForm()
   const [acceptedFile, setAcceptedFile] = useState<File[]>([])
 
@@ -78,7 +78,7 @@ const FileUpload = (props: FileUploadProps) => {
 
   const DefaultFileButtons = () => (
     <>
-      <input id={"" + name} {...field} {...getInputProps()} />
+      <input id={"" + name} {...getInputProps()} />
       <Text>{helperText}</Text>
     </>
   )
