@@ -102,7 +102,7 @@ const Home: NextPage = () => {
 
   // RENDER
   return (
-    <Box bg="gray.50" w="100vw" h="100vh">
+    <Box w="100vw" h="100vh">
       <Container centerContent w="100%">
         {isLoading && <Spinner />}
         {!currentUser && (
