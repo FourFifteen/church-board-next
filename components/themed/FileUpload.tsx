@@ -9,19 +9,19 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react"
-import { ReactNode, useCallback, useEffect, useState } from "react"
+import { ReactNode, useCallback, useState } from "react"
 import { Accept, useDropzone } from "react-dropzone"
-import { useForm } from "react-hook-form"
 import { RiImageAddFill } from "react-icons/ri"
-import { UpdateUserControls } from "../../pages/settings"
 
-interface FileUploadProps extends UpdateUserControls<"photoURL"> {
+interface FileUploadProps {
+  name: string
   accept?: Accept
   children?: ReactNode
   maxFiles?: number
-  mode?: "update"
   label: string
   helperText?: string
+  value: File[] | null
+  setValue: (value: File[]) => void
 }
 
 const FileUpload = (props: FileUploadProps) => {
@@ -33,21 +33,16 @@ const FileUpload = (props: FileUploadProps) => {
     maxFiles = 1,
     name,
     label,
-    mode = "update",
     helperText = "Drag and drop to upload your profile image.",
+    setValue,
   } = props
-  const { register, unregister, setValue, watch } = useForm()
   const [acceptedFile, setAcceptedFile] = useState<File[]>([])
-
-  const files = watch(name)
 
   const onDrop = useCallback(
     (droppedFiles: File[]) => {
-      const newFiles =
-        mode === "update" ? droppedFiles : [...(files || []), ...droppedFiles]
-      setValue(name, newFiles, { shouldValidate: true })
+      setValue(droppedFiles)
     },
-    [setValue, name, mode, files],
+    [setValue],
   )
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -66,15 +61,7 @@ const FileUpload = (props: FileUploadProps) => {
 
   const removePhoto = useCallback(() => {
     setAcceptedFile([])
-    setValue("", [])
-  }, [setValue])
-
-  useEffect(() => {
-    register(name)
-    return () => {
-      unregister(name)
-    }
-  }, [register, unregister, name])
+  }, [])
 
   const DefaultFileButtons = () => (
     <>

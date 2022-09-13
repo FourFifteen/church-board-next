@@ -1,23 +1,22 @@
 import { FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react"
-import { FieldError } from "react-hook-form"
 
-type HookFormControlProps = {
+type LabeledFormControlProps = {
   children: React.ReactNode
-  error?: FieldError
   label?: string
+  error?: string
   name: string
 }
-const HookFormControl = ({
+const LabeledFormControl = ({
   children,
   error,
   label,
   name,
-}: HookFormControlProps) => (
+}: LabeledFormControlProps) => (
   <FormControl isInvalid={Boolean(error)}>
     {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
     {children}
-    {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
+    {error && <FormErrorMessage>{error}</FormErrorMessage>}
   </FormControl>
 )
 
-export default HookFormControl
+export default LabeledFormControl

@@ -9,11 +9,13 @@ import {
   useColorModeValue,
   useEditableControls,
 } from "@chakra-ui/react"
+import { ChangeEvent } from "react"
 import { RiCheckFill, RiCloseFill } from "react-icons/ri"
 
 type EditableWithButtonProps = {
   name: string
   defaultValue?: string
+  setValue: (e: ChangeEvent<HTMLInputElement>) => void
   type?: "email" | "text" | "textarea"
 }
 
@@ -21,6 +23,7 @@ const EditableWithButton = ({
   defaultValue = "",
   name,
   type = "text",
+  setValue,
 }: EditableWithButtonProps) => {
   return (
     <Editable
@@ -47,6 +50,7 @@ const EditableWithButton = ({
         w="full"
         name={name}
         id={name}
+        onChange={setValue}
       />
       <EditableControls />
     </Editable>

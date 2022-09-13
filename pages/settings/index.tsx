@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Button,
   Container,
@@ -11,26 +10,24 @@ import {
 } from "@chakra-ui/react"
 import { NextPage } from "next"
 import {
-  Controller,
-  ControllerRenderProps,
-  FieldError,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form"
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react"
 import { RiMoonClearFill, RiSunFill } from "react-icons/ri"
 import EditableWithButton from "../../components/themed/EditableWithButton"
 import FileUpload from "../../components/themed/FileUpload"
-import HookFormControl from "../../components/themed/HookFormControl"
+import LabeledFormControl from "../../components/themed/LabeledFormControl"
 import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth"
+import { User } from "../../types"
 
 export type UpdateUserInputs = {
   name: string
   email: string
-  photoURL: FileList
+  photos: File[] | null
 }
-
-export type UpdateUserControls<T extends keyof UpdateUserInputs> =
-  ControllerRenderProps<UpdateUserInputs, T>
 
 // I'll need to make this separate at some point...
 const THEME_ICON_MAP = {
@@ -41,30 +38,51 @@ const THEME_ICON_MAP = {
 const SettingsIndexPage: NextPage = () => {
   const { currentUser } = useProtectedRouteAuth()
   const { colorMode, toggleColorMode } = useColorMode()
-  const { handleSubmit, formState, control } = useForm<UpdateUserInputs>()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [name, setName] = useState(currentUser?.name || "")
+  const [email, setEmail] = useState(currentUser?.email || "")
+  const [photos, setPhotos] = useState<UpdateUserInputs["photos"]>(null)
 
-  const {
-    name: nameErrors,
-    email: emailErrors,
-    photoURL: photoErrors,
-  } = formState.errors
+  // const [nameErrors, setNameErrors] = useState("")
+  // const [emailErrors, setEmailErrors] = useState("")
+  // const [photosErrors, setPhotosErrors] = useState("")
 
-  const postUserSettings: SubmitHandler<UpdateUserInputs> = async (
-    formData,
-  ) => {
-    if (!currentUser) {
-      return
+  const handleSetPhotos = (value: FileList | File[]) => {
+    if (value instanceof FileList) {
+      setPhotos(extractPhotos(value))
+    } else {
+      setPhotos(value)
     }
-    const response = await fetch("api/users/" + currentUser.id, {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-    const data = response.json()
-    console.log(data)
   }
+  const handleTextInput =
+    (setter: Dispatch<SetStateAction<string>>) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setter(e.target.value)
+    }
+  // const {
+  //   name: nameErrors,
+  //   email: emailErrors,
+  //   photoURL: photoErrors,
+  // } = formState.errors
+
+  useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.name)
+      setEmail(currentUser.email)
+    }
+  }, [currentUser])
+  useEffect(() => {
+    if (isSubmitting) {
+      postUserSettings(
+        {
+          name,
+          email,
+          photos,
+        },
+        currentUser,
+      )
+    }
+  }, [isSubmitting, name, email, photos, currentUser])
 
   return (
     <Container>
@@ -77,33 +95,35 @@ const SettingsIndexPage: NextPage = () => {
       {currentUser && (
         <Grid templateColumns={["2fr 1fr", "1fr"]}>
           <GridItem w="full">
-            <form onSubmit={handleSubmit(postUserSettings)}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                setIsSubmitting(true)
+              }}
+            >
               <Stack spacing="6" w="full">
-                <HookFormControl
-                  Input={EditableWithButton}
-                  error={nameErrors}
-                  label="Name"
-                  name="name"
-                ></HookFormControl>
-                <HookFormControl
-                  Input={EditableWithButton}
-                  error={emailErrors}
-                  label="Email"
-                  name="email"
-                ></HookFormControl>
-                <HookFormControl
-                  error={photoErrors as FieldError | undefined}
-                  label="Profile Photo"
-                  name="photoURL"
-                >
-                  <Controller
-                    name="photoURL"
-                    control={control}
-                    render={({ field }) => (
-                      <FileUpload label="Profile Photo" {...field} />
-                    )}
+                <LabeledFormControl label="Name" name="name">
+                  <EditableWithButton
+                    defaultValue={name}
+                    name={name}
+                    setValue={handleTextInput(setName)}
                   />
-                </HookFormControl>
+                </LabeledFormControl>
+                <LabeledFormControl label="Email" name="email">
+                  <EditableWithButton
+                    defaultValue={email}
+                    name={email}
+                    setValue={handleTextInput(setEmail)}
+                  />
+                </LabeledFormControl>
+                <LabeledFormControl label="Profile Photo" name="photoURL">
+                  <FileUpload
+                    label="Profile Photo"
+                    name="photoURL"
+                    value={photos}
+                    setValue={handleSetPhotos}
+                  />
+                </LabeledFormControl>
                 <Button colorScheme="teal" variant="solid" type="submit">
                   Save changes
                 </Button>
@@ -127,3 +147,28 @@ const SettingsIndexPage: NextPage = () => {
 }
 
 export default SettingsIndexPage
+
+const postUserSettings = async (
+  formData: UpdateUserInputs,
+  currentUser: User | null,
+) => {
+  if (!currentUser) {
+    return
+  }
+  const response = await fetch("api/users/" + currentUser.id, {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+    },
+    body: JSON.stringify(formData),
+  })
+  const data = response.json()
+  console.log(data)
+}
+
+const extractPhotos = (photos: FileList | null) => {
+  if (!photos) {
+    return null
+  }
+  return Array.from(photos)
+}
