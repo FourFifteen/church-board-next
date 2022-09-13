@@ -1,11 +1,15 @@
 import {
   Box,
   Button,
+  Center,
   Container,
+  Grid,
+  GridItem,
   Heading,
   Input,
   Link,
   Spinner,
+  Stack,
   Text,
   Textarea,
 } from "@chakra-ui/react"
@@ -17,12 +21,7 @@ import { useDBServiceList } from "../adapters/firebase-database"
 import NeedDetail from "../components/NeedDetail"
 import NeedList from "../components/NeedList"
 import { useAuth } from "../services/auth"
-import {
-  NEED_MODAL_DISPLAY_STATES,
-  Need,
-  NeedData,
-  UserID,
-} from "../types"
+import { Need, NeedData, NEED_MODAL_DISPLAY_STATES, UserID } from "../types"
 
 const CHURCH_NAME = process.env.NEXT_PUBLIC_CHURCH_NAME
 const Welcome = () => (
@@ -118,28 +117,49 @@ const Home: NextPage = () => {
         {error && (
           <Text>Encountered an error loading the Needs data. Sorry!</Text>
         )}
-        <NeedList
-          listSnapshots={[snapshots, loading, error]}
-          updatedNeedErrorMessage={updatedNeedErrorMessage}
-          updatedNeedConfirmMessage={updatedNeedConfirmMessage}
-          setActiveNeed={setActiveNeed}
-          setShowModal={setShowModal}
-        />
-        {currentUser && showModal === "add" && (
-          <AddNeedModal
-            userId={currentUser.id}
-            handleCloseModal={() => setShowModal("none")}
-          />
-        )}
-        {currentUser && activeNeed && showModal === "detail" && (
-          <NeedDetail
-            userId={currentUser.id}
-            activeNeed={activeNeed}
-            userName={currentUser.name}
-            saveActiveNeed={handleSaveActiveNeed(activeNeed)}
-            handleCloseDetail={handleCloseDetail}
-          />
-        )}
+        <Stack direction={"column"} spacing={4}>
+          <Welcome />
+          <Grid templateColumns={["1fr", "7fr 1fr"]}>
+            <GridItem colSpan={1}>
+              <Box>
+                <NeedList
+                  listSnapshots={[snapshots, loading, error]}
+                  updatedNeedErrorMessage={updatedNeedErrorMessage}
+                  updatedNeedConfirmMessage={updatedNeedConfirmMessage}
+                  setActiveNeed={setActiveNeed}
+                  setShowModal={setShowModal}
+                />
+                {currentUser && showModal === "add" && (
+                  <AddNeedModal
+                    userId={currentUser.id}
+                    handleCloseModal={() => setShowModal("none")}
+                  />
+                )}
+                {currentUser && activeNeed && showModal === "detail" && (
+                  <NeedDetail
+                    userId={currentUser.id}
+                    activeNeed={activeNeed}
+                    userName={currentUser.name}
+                    saveActiveNeed={handleSaveActiveNeed(activeNeed)}
+                    handleCloseDetail={handleCloseDetail}
+                  />
+                )}
+              </Box>
+            </GridItem>
+            <GridItem colStart={2}>
+              <Center w="full">
+                <Box
+                  w={["200px, 100px"]}
+                  h={["200px, 100px"]}
+                  border="1px"
+                  borderColor="teal.200"
+                >
+                  <Text>Enter your QR code here!</Text>
+                </Box>
+              </Center>
+            </GridItem>
+          </Grid>
+        </Stack>
       </Container>
     </Box>
   )
