@@ -12,7 +12,7 @@ import {
   TagLeftIcon,
 } from "@chakra-ui/react"
 import React, { useRef, useState } from "react"
-import { Need, User, UserID } from "../types"
+import { Need, User, UserID } from "../../../types"
 
 interface NeedDetailProps {
   activeNeed: Need | null
@@ -30,7 +30,7 @@ const FULFILLED_STATES: Need["fulfilledState"][] = [
   "N/A",
 ]
 
-const NeedDetail: React.FC<NeedDetailProps> = ({
+export const NeedDetail: React.FC<NeedDetailProps> = ({
   userId,
   activeNeed,
   saveActiveNeed,
@@ -131,5 +131,3 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
     </Modal>
   )
 }
-
-export default NeedDetail

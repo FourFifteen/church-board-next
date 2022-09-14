@@ -8,11 +8,11 @@ import {
   ListItem,
   Spinner,
   Stack,
-  Text
+  Text,
 } from "@chakra-ui/react"
 import NextLink from "next/link"
-import { useGetPerson } from "../hooks/useGetPerson"
-import { Need, NEED_MODAL_DISPLAY_STATES } from "../types"
+import { useGetPerson } from "../../../hooks/useGetPerson"
+import { Need, NEED_MODAL_DISPLAY_STATES } from "../../../types"
 
 type NeedListItemProps = {
   need: Need
@@ -22,24 +22,18 @@ type NeedListItemProps = {
   setShowModal: React.Dispatch<React.SetStateAction<NEED_MODAL_DISPLAY_STATES>>
 }
 
-const NeedListItem: React.FC<NeedListItemProps> = ({
+export const NeedListItem = ({
   need,
   setActiveNeed,
   setShowModal,
   updatedNeedConfirmMessage,
-  updatedNeedErrorMessage
-}) => {
-  const {
-    assigneeId,
-    ownerId,
-    id,
-    name,
-    fulfilledState,
-    description
-  } = need
-  const [assignee, assigneeLoading, assigneeError] = useGetPerson("" + assigneeId)
+  updatedNeedErrorMessage,
+}: NeedListItemProps) => {
+  const { assigneeId, ownerId, id, name, fulfilledState, description } = need
+  const [assignee, assigneeLoading, assigneeError] = useGetPerson(
+    "" + assigneeId,
+  )
   const [owner, ownerLoading, ownerError] = useGetPerson("" + ownerId)
-
 
   // HANDLERS
   const handleOpenDetail = (need: Need) => {
@@ -79,17 +73,18 @@ const NeedListItem: React.FC<NeedListItemProps> = ({
     )
   }
 
-  const renderError = (condition = true, title = "Error!", message = "Encountered an error") => (
+  const renderError = (
+    condition = true,
+    title = "Error!",
+    message = "Encountered an error",
+  ) => (
     <>
       {condition && (
         <Alert status="error">
           <AlertIcon />
           <AlertTitle>{title}</AlertTitle>
-          <AlertDescription>
-            {message}
-          </AlertDescription>
+          <AlertDescription>{message}</AlertDescription>
         </Alert>
-
       )}
     </>
   )
@@ -111,9 +106,21 @@ const NeedListItem: React.FC<NeedListItemProps> = ({
         <Text>{assignee?.name}</Text>
         <Text>{owner?.name}</Text>
         {renderThanksButton("" + id, need)}
-        {renderError(Boolean(assigneeError), "Update Error!", "Failed to get Assignee data")}
-        {renderError(Boolean(ownerError), "Update Error!", "Failed to get Owner data")}
-        {renderError(Boolean(updatedNeedErrorMessage), "Update Error!", updatedNeedErrorMessage)}
+        {renderError(
+          Boolean(assigneeError),
+          "Update Error!",
+          "Failed to get Assignee data",
+        )}
+        {renderError(
+          Boolean(ownerError),
+          "Update Error!",
+          "Failed to get Owner data",
+        )}
+        {renderError(
+          Boolean(updatedNeedErrorMessage),
+          "Update Error!",
+          updatedNeedErrorMessage,
+        )}
         {/* currently triggering on all */}
         {updatedNeedConfirmMessage && (
           <Alert status="success">
@@ -125,5 +132,3 @@ const NeedListItem: React.FC<NeedListItemProps> = ({
     </ListItem>
   )
 }
-
-export default NeedListItem

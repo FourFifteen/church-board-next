@@ -7,13 +7,13 @@ import {
   Stack,
 } from "@chakra-ui/react"
 import { RiUser3Fill } from "react-icons/ri"
-import { FirebaseAuthService } from "../adapters/firebase-auth"
-import { FirebaseDocDatabaseService } from "../adapters/firebase-database"
-import { makeAuthContextProvider, useAuth } from "../services/auth"
-import { makeDatabaseContextProvider } from "../services/database"
-import { Link } from "./themed/Link"
+import { Link } from ".."
+import { FirebaseAuthService } from "../../../adapters/firebase-auth"
+import { FirebaseDocDatabaseService } from "../../../adapters/firebase-database"
+import { makeAuthContextProvider, useAuth } from "../../../services/auth"
+import { makeDatabaseContextProvider } from "../../../services/database"
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+export const Layout = ({ children }: { children: React.ReactNode }) => {
   const AuthProvider = makeAuthContextProvider(FirebaseAuthService)
   const DatabaseProvider = makeDatabaseContextProvider(
     FirebaseDocDatabaseService,
@@ -32,8 +32,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </ChakraProvider>
   )
 }
-
-export default Layout
 
 const GlobalNav = () => {
   const { currentUser, isLoading } = useAuth()

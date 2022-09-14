@@ -1,13 +1,8 @@
-import {
-  Box,
-  Button,
-  List,
-  Text
-} from "@chakra-ui/react"
+import { Box, Button, List, Text } from "@chakra-ui/react"
 import React from "react"
-import type { DBServiceList } from "../adapters/firebase-database"
-import { Need, NEED_MODAL_DISPLAY_STATES } from "../types"
-import NeedListItem from "./NeedListItem"
+import type { DBServiceList } from "../../../adapters/firebase-database"
+import { Need, NEED_MODAL_DISPLAY_STATES } from "../../../types"
+import { NeedListItem } from "../organisms"
 
 type NeedListProps = {
   listSnapshots: DBServiceList
@@ -17,12 +12,12 @@ type NeedListProps = {
   setShowModal: React.Dispatch<React.SetStateAction<NEED_MODAL_DISPLAY_STATES>>
 }
 
-const NeedList: React.FC<NeedListProps> = ({
+export const NeedList: React.FC<NeedListProps> = ({
   listSnapshots,
   setActiveNeed,
   setShowModal,
   updatedNeedConfirmMessage,
-  updatedNeedErrorMessage
+  updatedNeedErrorMessage,
 }) => {
   const [snapshots, loading] = listSnapshots
 
@@ -52,13 +47,8 @@ const NeedList: React.FC<NeedListProps> = ({
               if (!snapshot || !snapshot.key) {
                 return null
               }
-              const {
-                name,
-                description,
-                fulfilledState,
-                ownerId,
-                assigneeId,
-              } = snapshot.val()
+              const { name, description, fulfilledState, ownerId, assigneeId } =
+                snapshot.val()
               const key = snapshot.key
               const need: Need = {
                 name,
@@ -85,7 +75,3 @@ const NeedList: React.FC<NeedListProps> = ({
     </Box>
   )
 }
-
-export default NeedList
-
-

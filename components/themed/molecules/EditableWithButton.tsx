@@ -19,7 +19,7 @@ type EditableWithButtonProps = {
   type?: "email" | "text" | "textarea"
 }
 
-const EditableWithButton = ({
+export const EditableWithButton = ({
   defaultValue = "",
   name,
   type = "text",
@@ -56,8 +56,6 @@ const EditableWithButton = ({
     </Editable>
   )
 }
-
-export default EditableWithButton
 
 const EditableControls = () => {
   const { isEditing, getSubmitButtonProps, getCancelButtonProps } =

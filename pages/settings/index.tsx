@@ -17,9 +17,11 @@ import {
   useState,
 } from "react"
 import { RiMoonClearFill, RiSunFill } from "react-icons/ri"
-import EditableWithButton from "../../components/themed/EditableWithButton"
-import FileUpload from "../../components/themed/FileUpload"
-import LabeledFormControl from "../../components/themed/LabeledFormControl"
+import {
+  EditableWithButton,
+  FileUpload,
+  LabeledFormControl,
+} from "../../components/themed"
 import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth"
 import { User } from "../../types"
 
