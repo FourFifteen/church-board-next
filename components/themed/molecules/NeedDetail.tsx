@@ -70,7 +70,7 @@ export const NeedDetail: React.FC<NeedDetailProps> = ({
     if (IN_VIEW_ONLY_MODE) {
       return existingState
     } else if (IN_EDIT_MODE && isAssigneeOnlyState) {
-      // if the owner is changing the fullfilledState,
+      // if the owner is changing the fulfilledState,
       // and the Need is assigned,
       // then we mark the need as no longer needed.
       return "N/A"
