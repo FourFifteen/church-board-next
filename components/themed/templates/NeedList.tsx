@@ -1,4 +1,4 @@
-import { Box, Button, List, Text } from "@chakra-ui/react"
+import { Button, List, Stack, Text } from "@chakra-ui/react"
 import React from "react"
 import type { DBServiceList } from "../../../adapters/firebase-database"
 import { Need, NEED_MODAL_DISPLAY_STATES } from "../../../types"
@@ -32,7 +32,7 @@ export const NeedList: React.FC<NeedListProps> = ({
   }
 
   return (
-    <Box>
+    <Stack spacing={6}>
       {/* We are: -Loading, -Have no valid db reference, -Have a valid reference with no data */}
       {(!snapshots || (snapshots && !snapshots.length)) &&
         !loading &&
@@ -42,7 +42,7 @@ export const NeedList: React.FC<NeedListProps> = ({
       {snapshots && snapshots.length && (
         <>
           {renderAddState()}
-          <List>
+          <List spacing={[6, 12]}>
             {snapshots.map((snapshot) => {
               if (!snapshot || !snapshot.key) {
                 return null
@@ -72,6 +72,6 @@ export const NeedList: React.FC<NeedListProps> = ({
           </List>
         </>
       )}
-    </Box>
+    </Stack>
   )
 }

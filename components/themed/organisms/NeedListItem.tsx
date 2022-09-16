@@ -4,15 +4,20 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
+  Heading,
+  Icon,
   Link,
   ListItem,
   Spinner,
   Stack,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react"
 import NextLink from "next/link"
+import { RiUser5Fill } from "react-icons/ri"
 import { useGetPerson } from "../../../hooks/useGetPerson"
 import { Need, NEED_MODAL_DISPLAY_STATES } from "../../../types"
+import { truncate } from "../../../utils/truncate"
 
 type NeedListItemProps = {
   need: Need
@@ -34,7 +39,7 @@ export const NeedListItem = ({
     "" + assigneeId,
   )
   const [owner, ownerLoading, ownerError] = useGetPerson("" + ownerId)
-
+  const borderColorValue = useColorModeValue("teal.500", "teal.300")
   // HANDLERS
   const handleOpenDetail = (need: Need) => {
     setShowModal("detail")
@@ -55,7 +60,8 @@ export const NeedListItem = ({
     // const isNotOwnNeed = assigneeId && assigneeId !== ownerId
     const isFulfilled = fulfilledState === "Fulfilled"
 
-    if (isFulfilled) {
+    // don't show the button if the need isn't fulfilled
+    if (!isFulfilled) {
       // if (!isNotOwnNeed || isFulfilled) {
       return null
     }
@@ -99,10 +105,27 @@ export const NeedListItem = ({
       onClick={() => handleOpenDetail(need)}
       style={{ cursor: "pointer" }}
     >
-      <Stack spacing={3}>
-        <Text>{name}</Text>
-        <Text>{description}</Text>
-        <Text>{fulfilledState}</Text>
+      <Stack
+        spacing={3}
+        border={1}
+        borderColor={borderColorValue}
+        borderStyle="solid"
+        rounded="md"
+        p={6}
+        // boxShadow="0.5rem 0.5rem #319795"
+        _hover={{
+          translate: "-0.5rem -0.5rem",
+          transition: "all 0.2s ease-in-out",
+          boxShadow: "1rem 1rem #319795",
+        }}
+        boxShadow="brutal"
+      >
+        <Heading as="h3">{truncate(name)}</Heading>
+        <Text fontSize="sm">{truncate(description)}</Text>
+        <Text>
+          <Icon as={RiUser5Fill} role="img" />
+          {fulfilledState}
+        </Text>
         <Text>{assignee?.name}</Text>
         <Text>{owner?.name}</Text>
         {renderThanksButton("" + id, need)}

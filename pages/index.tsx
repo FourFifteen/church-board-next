@@ -118,7 +118,12 @@ const Home: NextPage = () => {
         )}
         <Stack direction={"column"} spacing={4}>
           <Welcome />
-          <Grid templateColumns={["1fr", "7fr 1fr"]}>
+          <Grid
+            templateColumns={["1fr", "7fr 1fr"]}
+            gap={6}
+            justifyContent="center"
+            alignItems="center"
+          >
             <GridItem colSpan={1}>
               <Box>
                 <NeedList

@@ -6,12 +6,15 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react"
+import "@fontsource/ibm-plex-sans/400.css"
+import "@fontsource/ibm-plex-serif/700.css"
 import { RiUser3Fill } from "react-icons/ri"
 import { Link } from ".."
 import { FirebaseAuthService } from "../../../adapters/firebase-auth"
 import { FirebaseDocDatabaseService } from "../../../adapters/firebase-database"
 import { makeAuthContextProvider, useAuth } from "../../../services/auth"
 import { makeDatabaseContextProvider } from "../../../services/database"
+import theme from "../../../theme"
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const AuthProvider = makeAuthContextProvider(FirebaseAuthService)
@@ -20,7 +23,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   )
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <AuthProvider>
         <DatabaseProvider>
           <Box w="100vw" h="100vh">
