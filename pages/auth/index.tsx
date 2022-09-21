@@ -26,15 +26,13 @@ const AuthPage: NextPage = () => {
         method: "POST",
         body: JSON.stringify(currentUser),
       })
-      router.push(
-        typeof redirectUrl === "string" ? redirectUrl : "/"
-      )
+      router.push(typeof redirectUrl === "string" ? redirectUrl : "/")
     }
     if (currentUser) {
       console.log("hello world")
       fetcher()
     }
-  }, [currentUser])
+  }, [currentUser, redirectUrl, router])
 
   const signInOptions: SignInOptions[] = [
     { provider: "Google", icon: RiGoogleFill },

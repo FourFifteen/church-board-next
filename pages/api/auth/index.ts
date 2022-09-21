@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { FirebaseDocDatabaseService } from "../../../adapters/firebase-database"
 import { User } from "../../../types"
 
-export default async function hander(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
@@ -10,6 +10,7 @@ export default async function hander(
     FirebaseDocDatabaseService
   const getUserRef = (id: User["id"]) => getTableRef("users/" + id)
   const method = req.method
+  console.log("method", method)
 
   const checkUserExists = async (existingUserId: User["id"]) => {
     const snapshot = await getValFromRef(getUserRef(existingUserId))
