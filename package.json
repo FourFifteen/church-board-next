@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --watch",
-    "test:ci": "jest --ci"
+    "test:ci": "jest --ci",
+    "firebase:db:deploy": "firebase deploy --only database"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.1.2",
@@ -16,7 +17,7 @@
     "@emotion/styled": "^11",
     "@types/firebase": "^3.2.1",
     "@types/uuid": "^8.3.4",
-    "firebase": "^9.8.2",
+    "firebase": "^9.10.0",
     "framer-motion": "^6",
     "next": "12.1.6",
     "react": "18.1.0",

@@ -48,7 +48,12 @@
         "newlines-between": "never"
       }
     ],
-    "prettier/prettier": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "all"
+      }
+    ],
     "react/react-in-jsx-scope": 0,
     "react/prop-types": 1,
     "sort-imports": [
