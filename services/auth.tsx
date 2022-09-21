@@ -1,9 +1,9 @@
 // This is a carbon copy of https://github.com/luiz-chagas/react-auth-service/blob/main/src/services/auth.tsx
 
 import {
+  createContext,
   FC,
   PropsWithChildren,
-  createContext,
   useContext,
   useEffect,
   useMemo,
@@ -28,7 +28,7 @@ type UnsubscribeFn = () => void
 
 export const AuthErrors = {
   ServiceNotSetUp: "Auth Service has not been set up",
-  InvalidProdiver: "Provider not supported",
+  InvalidProvider: "Provider not supported",
 }
 
 type UserChangedEventCallback = (x: User | null) => void

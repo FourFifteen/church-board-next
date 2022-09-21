@@ -19,6 +19,7 @@ import NextLink from "next/link"
 import React, { useEffect, useState } from "react"
 import { useDBServiceList } from "../adapters/firebase-database"
 import { NeedDetail, NeedList } from "../components/themed"
+import { Background } from "../components/themed/atoms/Background"
 import { useAuth } from "../services/auth"
 import { Need, NeedData, NEED_MODAL_DISPLAY_STATES, UserID } from "../types"
 
@@ -100,8 +101,8 @@ const Home: NextPage = () => {
 
   // RENDER
   return (
-    <Box w="100vw" h="100vh">
-      <Container centerContent w="100%">
+    <Background w="100vw" h="100vh">
+      <Container centerContent maxW="container.xl">
         {isLoading && <Spinner />}
         {!currentUser && (
           <>
@@ -119,7 +120,7 @@ const Home: NextPage = () => {
         <Stack direction={"column"} spacing={4}>
           <Welcome />
           <Grid
-            templateColumns={["1fr", "7fr 1fr"]}
+            templateColumns={["1fr", "5fr 1fr"]}
             gap={6}
             justifyContent="center"
             alignItems="center"
@@ -165,7 +166,7 @@ const Home: NextPage = () => {
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </Background>
   )
 }
 

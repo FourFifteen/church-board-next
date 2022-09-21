@@ -51,7 +51,7 @@ const GlobalNav = () => {
         direction="row"
         alignItems="center"
       >
-        <Box bg="red.50" />
+        <Box bg="red.50" w="12" h="12" />
         <Stack direction="row">
           <Link href="/">Home</Link>
           <Link href="/thanks">Thanks</Link>
