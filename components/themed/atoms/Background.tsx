@@ -1,6 +1,4 @@
 import { Box, BoxProps, useColorMode } from "@chakra-ui/react"
-import backgroundDark from "../../../public/bg_dark.png"
-import backgroundLight from "../../../public/bg_light.png"
 
 type BackgroundProps = {
   children: React.ReactNode
@@ -8,11 +6,12 @@ type BackgroundProps = {
 
 export const Background = ({ children, ...props }: BackgroundProps) => {
   const { colorMode } = useColorMode()
-  const background = colorMode === "light" ? backgroundLight : backgroundDark
+  const background = `url('bg_${colorMode}.png')`
+  const backgroundPosition = colorMode === "light" ? "top" : "bottom"
   return (
     <Box
-      bgImage={`url('bg_light.png')`}
-      backgroundPosition="center"
+      bgImage={background}
+      backgroundPosition={backgroundPosition}
       backgroundRepeat="no-repeat"
       {...props}
     >
