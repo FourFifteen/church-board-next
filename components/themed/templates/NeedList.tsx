@@ -2,9 +2,11 @@ import { Button, List, Stack, Text } from "@chakra-ui/react"
 import React from "react"
 import type { DBServiceList } from "../../../adapters/firebase-database"
 import { Need, NEED_MODAL_DISPLAY_STATES } from "../../../types"
-import { NeedListItem } from "../organisms"
+import { NeedListItem, NeedListItemProps } from "../organisms"
 
 type NeedListProps = {
+  activeNeed: Need | null
+  handleSaveActiveNeed: NeedListItemProps["handleSaveActiveNeed"]
   listSnapshots: DBServiceList
   updatedNeedErrorMessage: string
   updatedNeedConfirmMessage: string
@@ -12,7 +14,11 @@ type NeedListProps = {
   setShowModal: React.Dispatch<React.SetStateAction<NEED_MODAL_DISPLAY_STATES>>
 }
 
+const NEEDS_LIST_COLORS = ["teal", "pink", "purple", "orange"]
+
 export const NeedList: React.FC<NeedListProps> = ({
+  activeNeed,
+  handleSaveActiveNeed,
   listSnapshots,
   setActiveNeed,
   setShowModal,
@@ -42,8 +48,8 @@ export const NeedList: React.FC<NeedListProps> = ({
       {snapshots && snapshots.length && (
         <>
           {renderAddState()}
-          <List spacing={[6, 12]}>
-            {snapshots.map((snapshot) => {
+          <Stack direction={["column", "row"]} spacing={[6, 12]} as={List}>
+            {snapshots.map((snapshot, index) => {
               if (!snapshot || !snapshot.key) {
                 return null
               }
@@ -61,7 +67,13 @@ export const NeedList: React.FC<NeedListProps> = ({
               return (
                 <NeedListItem
                   key={key}
+                  boxShadow={
+                    "brutal-" +
+                    NEEDS_LIST_COLORS[index % NEEDS_LIST_COLORS.length]
+                  }
+                  handleSaveActiveNeed={handleSaveActiveNeed}
                   need={need}
+                  activeNeed={activeNeed}
                   setActiveNeed={setActiveNeed}
                   setShowModal={setShowModal}
                   updatedNeedErrorMessage={updatedNeedErrorMessage}
@@ -69,7 +81,7 @@ export const NeedList: React.FC<NeedListProps> = ({
                 />
               )
             })}
-          </List>
+          </Stack>
         </>
       )}
     </Stack>

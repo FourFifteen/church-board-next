@@ -14,7 +14,7 @@ import type { NextPage } from "next"
 import NextLink from "next/link"
 import { useEffect, useState } from "react"
 import { useDBServiceList } from "../adapters/firebase-database"
-import { NeedDetail, NeedList } from "../components/themed"
+import { NeedList } from "../components/themed"
 import { AddNeedModal } from "../components/themed/organisms/AddNeedModal"
 import { useAuth } from "../services/auth"
 import { Need, NEED_MODAL_DISPLAY_STATES } from "../types"
@@ -75,10 +75,6 @@ const Home: NextPage = () => {
     post()
   }, [activeNeed, hasActiveNeedChanged])
 
-  const handleCloseDetail = () => {
-    setShowModal("none")
-  }
-
   // By currying this function, we can "save" the first parameter in the function,
   // then compare it to the new one when we actually run the enclosed function
   const handleSaveActiveNeed =
@@ -128,20 +124,15 @@ const Home: NextPage = () => {
                 updatedNeedConfirmMessage={updatedNeedConfirmMessage}
                 setActiveNeed={setActiveNeed}
                 setShowModal={setShowModal}
+                activeNeed={activeNeed}
+                handleSaveActiveNeed={handleSaveActiveNeed(
+                  activeNeed || ({} as Need),
+                )}
               />
               {currentUser && showModal === "add" && (
                 <AddNeedModal
                   userId={currentUser.id}
                   handleCloseModal={() => setShowModal("none")}
-                />
-              )}
-              {currentUser && activeNeed && showModal === "detail" && (
-                <NeedDetail
-                  userId={currentUser.id}
-                  activeNeed={activeNeed}
-                  userName={currentUser.name}
-                  saveActiveNeed={handleSaveActiveNeed(activeNeed)}
-                  handleCloseDetail={handleCloseDetail}
                 />
               )}
             </Box>

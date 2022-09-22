@@ -14,8 +14,9 @@ import {
 import React, { useRef, useState } from "react"
 import { Need, User, UserID } from "../../../types"
 
-interface NeedDetailProps {
+export interface NeedDetailProps {
   activeNeed: Need | null
+  boxShadow?: string
   handleCloseDetail: () => void
   saveActiveNeed: (newNeedValues: Need) => void
   userId: UserID
@@ -31,6 +32,7 @@ const FULFILLED_STATES: Need["fulfilledState"][] = [
 ]
 
 export const NeedDetail: React.FC<NeedDetailProps> = ({
+  boxShadow,
   userId,
   activeNeed,
   saveActiveNeed,
@@ -105,7 +107,7 @@ export const NeedDetail: React.FC<NeedDetailProps> = ({
   return (
     <Modal isOpen={Boolean(activeNeed)} onClose={handleCloseDetail}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent boxShadow={boxShadow || "brutal-teal"}>
         <ModalHeader>{name}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
