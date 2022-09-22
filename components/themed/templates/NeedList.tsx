@@ -78,6 +78,7 @@ export const NeedList: React.FC<NeedListProps> = ({
                   setShowModal={setShowModal}
                   updatedNeedErrorMessage={updatedNeedErrorMessage}
                   updatedNeedConfirmMessage={updatedNeedConfirmMessage}
+                  maxW="50%"
                 />
               )
             })}

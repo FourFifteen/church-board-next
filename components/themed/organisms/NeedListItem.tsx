@@ -8,6 +8,7 @@ import {
   Icon,
   Link,
   ListItem,
+  ListItemProps,
   Spinner,
   Stack,
   Text,
@@ -30,7 +31,7 @@ export type NeedListItemProps = {
   setShowModal: React.Dispatch<React.SetStateAction<NEED_MODAL_DISPLAY_STATES>>
   updatedNeedErrorMessage: string
   updatedNeedConfirmMessage: string
-}
+} & ListItemProps
 
 export const NeedListItem = ({
   activeNeed,
@@ -41,6 +42,7 @@ export const NeedListItem = ({
   setShowModal,
   updatedNeedConfirmMessage,
   updatedNeedErrorMessage,
+  ...props
 }: NeedListItemProps) => {
   const { assigneeId, ownerId, id, name, fulfilledState, description } = need
   const [assignee, assigneeLoading, assigneeError] = useGetPerson(
@@ -120,6 +122,7 @@ export const NeedListItem = ({
         key={id}
         onClick={() => handleOpenDetail(need)}
         style={{ cursor: "pointer" }}
+        {...props}
       >
         <Stack
           spacing={3}

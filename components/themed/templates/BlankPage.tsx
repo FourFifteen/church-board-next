@@ -14,6 +14,7 @@ export const BlankPage = ({ children }: BlankPageProps) => {
       py="16"
       my="12"
       backgroundColor={backgroundColor}
+      rounded="md"
     >
       {children}
     </Container>

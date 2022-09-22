@@ -44,6 +44,8 @@ export const NeedDetail: React.FC<NeedDetailProps> = ({
   // use this to change the primary action text for the modal.
   // i.e. from "Close" to "Save changes"
   const hasChangedRef = useRef(false)
+  const replaceBrutal = (str?: string) =>
+    !str ? null : str.replace(/brutal-/g, "")
 
   if (!activeNeed || !activeFulfilledState) {
     // don't render or do anything unless we have an active Need.
@@ -105,11 +107,15 @@ export const NeedDetail: React.FC<NeedDetailProps> = ({
 
   // TODO: Turn this so that the Tags are updated with the Assignee's name and picture?
   return (
-    <Modal isOpen={Boolean(activeNeed)} onClose={handleCloseDetail}>
+    <Modal
+      isOpen={Boolean(activeNeed)}
+      onClose={handleCloseDetail}
+      colorScheme="teal"
+    >
       <ModalOverlay />
       <ModalContent boxShadow={boxShadow || "brutal-teal"}>
         <ModalHeader>{name}</ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton colorScheme="teal" />
         <ModalBody>
           <Tag
             onClick={handleFulfilledStateClick}
@@ -122,7 +128,7 @@ export const NeedDetail: React.FC<NeedDetailProps> = ({
 
         <ModalFooter>
           <Button
-            colorScheme="blue"
+            colorScheme={replaceBrutal(boxShadow) || "teal"}
             mr={3}
             onClick={handleSaveClick(handleCloseDetail)}
           >
