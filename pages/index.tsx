@@ -12,9 +12,10 @@ import {
 import isEqual from "lodash/fp/isEqual"
 import type { NextPage } from "next"
 import NextLink from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useDBServiceList } from "../adapters/firebase-database"
 import { NeedList } from "../components/themed"
+import { QRCode } from "../components/themed/molecules/QRCode"
 import { AddNeedModal } from "../components/themed/organisms/AddNeedModal"
 import { useAuth } from "../services/auth"
 import { Need, NEED_MODAL_DISPLAY_STATES } from "../types"
@@ -26,6 +27,7 @@ const Welcome = () => (
 
 const Home: NextPage = () => {
   const { currentUser, isLoading } = useAuth()
+  const qrCodeLink = useRef<string | null>(null)
   const [showModal, setShowModal] = useState<NEED_MODAL_DISPLAY_STATES>("none")
   const [activeNeed, setActiveNeed] = useState<Need | null>(null)
   const [hasActiveNeedChanged, setHasActiveNeedChanged] = useState(false)
@@ -34,6 +36,10 @@ const Home: NextPage = () => {
   // Data display
   const [updatedNeedErrorMessage, setUpdatedNeedErrorMessage] = useState("")
   const [updatedNeedConfirmMessage, setUpdatedNeedConfirmMessage] = useState("")
+
+  useEffect(() => {
+    qrCodeLink.current = window.location.origin
+  }, [])
 
   // PATCH CALL FOR UPDATES
   useEffect(() => {
@@ -93,7 +99,7 @@ const Home: NextPage = () => {
 
   // RENDER
   return (
-    <Box>
+    <Box px="8">
       {isLoading && <Spinner />}
       {!currentUser && (
         <>
@@ -139,14 +145,7 @@ const Home: NextPage = () => {
           </GridItem>
           <GridItem colStart={2}>
             <Center w="full">
-              <Box
-                w={["200px, 100px"]}
-                h={["200px, 100px"]}
-                border="1px"
-                borderColor="teal.200"
-              >
-                <Text>Enter your QR code here!</Text>
-              </Box>
+              {qrCodeLink.current && <QRCode link={qrCodeLink.current} />}
             </Center>
           </GridItem>
         </Grid>

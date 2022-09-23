@@ -18,7 +18,7 @@ import { RiUser5Fill } from "react-icons/ri"
 import { useGetPerson } from "../../../hooks/useGetPerson"
 import { useAuth } from "../../../services/auth"
 import { Need, NEED_MODAL_DISPLAY_STATES, User } from "../../../types"
-import { replaceBrutal, truncate } from "../../../utils"
+import { getBrutalBorder, truncate } from "../../../utils"
 import { NeedDetail, NeedDetailProps } from "../molecules"
 
 export type NeedListItemProps = {
@@ -125,7 +125,7 @@ export const NeedListItem = ({
         <Stack
           spacing={3}
           border={1}
-          borderColor={`${replaceBrutal(boxShadow)}.400` || "teal.400"}
+          borderColor={getBrutalBorder(boxShadow) || "teal.400"}
           borderStyle="solid"
           rounded="md"
           p={6}
