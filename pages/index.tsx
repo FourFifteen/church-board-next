@@ -4,14 +4,12 @@ import {
   Grid,
   GridItem,
   Heading,
-  Link,
   Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react"
 import isEqual from "lodash/fp/isEqual"
 import type { NextPage } from "next"
-import NextLink from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { useDBServiceList } from "../adapters/firebase-database"
 import { NeedList } from "../components/themed"
@@ -101,7 +99,8 @@ const Home: NextPage = () => {
   return (
     <Box px="8">
       {isLoading && <Spinner />}
-      {!currentUser && (
+      {/* comment out for demo */}
+      {/* {!currentUser && (
         <>
           <Welcome />
           <Text>Let&apos;s get you logged in.</Text>
@@ -109,7 +108,7 @@ const Home: NextPage = () => {
             <Link>Log in</Link>
           </NextLink>
         </>
-      )}
+      )} */}
       {loading && <Spinner />}
       {error && (
         <Text>Encountered an error loading the Needs data. Sorry!</Text>
