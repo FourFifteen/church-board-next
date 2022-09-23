@@ -97,7 +97,7 @@ const Home: NextPage = () => {
 
   // RENDER
   return (
-    <Box px="8">
+    <Box px={[2, 8]}>
       {isLoading && <Spinner />}
       {/* comment out for demo */}
       {/* {!currentUser && (
@@ -142,7 +142,7 @@ const Home: NextPage = () => {
               )}
             </Box>
           </GridItem>
-          <GridItem colStart={2}>
+          <GridItem colStart={[1, 2]}>
             <Center w="full">
               {qrCodeLink.current && <QRCode link={qrCodeLink.current} />}
             </Center>

@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react"
 import { RiUser3Fill } from "react-icons/ri"
 import { useAuth } from "../../../services/auth"
+import { ThemeButton } from "./ThemeButton"
 
 export const GlobalNav = () => {
   const { currentUser, isLoading } = useAuth()
@@ -41,6 +42,7 @@ export const GlobalNav = () => {
             referrerPolicy="no-referrer"
           />
         </Link>
+        <ThemeButton />
       </Stack>
     </Center>
   )

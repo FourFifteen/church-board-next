@@ -6,7 +6,6 @@ import {
   Heading,
   Stack,
   Text,
-  useColorMode,
 } from "@chakra-ui/react"
 import { NextPage } from "next"
 import {
@@ -16,12 +15,12 @@ import {
   useEffect,
   useState,
 } from "react"
-import { RiMoonClearFill, RiSunFill } from "react-icons/ri"
 import {
   EditableWithButton,
   FileUpload,
   LabeledFormControl,
 } from "../../components/themed"
+import { ThemeButton } from "../../components/themed/organisms/ThemeButton"
 import { useProtectedRouteAuth } from "../../hooks/useProtectedRouteAuth"
 import { User } from "../../types"
 
@@ -31,15 +30,8 @@ export type UpdateUserInputs = {
   photos: File[] | null
 }
 
-// I'll need to make this separate at some point...
-const THEME_ICON_MAP = {
-  dark: <RiMoonClearFill />,
-  light: <RiSunFill />,
-}
-
 const SettingsIndexPage: NextPage = () => {
   const { currentUser } = useProtectedRouteAuth()
-  const { colorMode, toggleColorMode } = useColorMode()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [name, setName] = useState(currentUser?.name || "")
   const [email, setEmail] = useState(currentUser?.email || "")
@@ -133,14 +125,7 @@ const SettingsIndexPage: NextPage = () => {
             </form>
           </GridItem>
           <GridItem ml={[6, 0]} mt={[0, 6]}>
-            <Button
-              onClick={toggleColorMode}
-              id="colormode"
-              colorScheme="teal"
-              variant="outline"
-            >
-              {THEME_ICON_MAP[colorMode]}
-            </Button>
+            <ThemeButton />
           </GridItem>
         </Grid>
       )}
