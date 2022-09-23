@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react"
 import React, { useRef, useState } from "react"
 import { Need, User, UserID } from "../../../types"
+import { replaceBrutal } from "../../../utils/replaceBrutal"
 
 export interface NeedDetailProps {
   activeNeed: Need | null
@@ -44,8 +45,6 @@ export const NeedDetail: React.FC<NeedDetailProps> = ({
   // use this to change the primary action text for the modal.
   // i.e. from "Close" to "Save changes"
   const hasChangedRef = useRef(false)
-  const replaceBrutal = (str?: string) =>
-    !str ? null : str.replace(/brutal-/g, "")
 
   if (!activeNeed || !activeFulfilledState) {
     // don't render or do anything unless we have an active Need.

@@ -12,14 +12,13 @@ import {
   Spinner,
   Stack,
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react"
 import NextLink from "next/link"
 import { RiUser5Fill } from "react-icons/ri"
 import { useGetPerson } from "../../../hooks/useGetPerson"
 import { useAuth } from "../../../services/auth"
 import { Need, NEED_MODAL_DISPLAY_STATES, User } from "../../../types"
-import { truncate } from "../../../utils/truncate"
+import { replaceBrutal, truncate } from "../../../utils"
 import { NeedDetail, NeedDetailProps } from "../molecules"
 
 export type NeedListItemProps = {
@@ -49,7 +48,6 @@ export const NeedListItem = ({
     "" + assigneeId,
   )
   const [owner, ownerLoading, ownerError] = useGetPerson("" + ownerId)
-  const borderColorValue = useColorModeValue("teal.500", "teal.300")
   const auth = useAuth()
   const currentUser = auth.currentUser as User
 
@@ -127,7 +125,7 @@ export const NeedListItem = ({
         <Stack
           spacing={3}
           border={1}
-          borderColor={borderColorValue}
+          borderColor={`${replaceBrutal(boxShadow)}.400` || "teal.400"}
           borderStyle="solid"
           rounded="md"
           p={6}
