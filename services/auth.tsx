@@ -7,7 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState
+  useState,
 } from "react"
 import { User } from "../types/entities/User"
 import { Service } from "./rootService"
@@ -28,7 +28,7 @@ type UnsubscribeFn = () => void
 
 export const AuthErrors = {
   ServiceNotSetUp: "Auth Service has not been set up",
-  InvalidProvider: "Provider not supported"
+  InvalidProvider: "Provider not supported",
 }
 
 type UserChangedEventCallback = (x: User | null) => void
@@ -50,7 +50,7 @@ const AuthContext = createContext<AuthServiceContext>({
     throw Error(AuthErrors.ServiceNotSetUp)
   },
   currentUser: null,
-  isLoading: true
+  isLoading: true,
 })
 
 export const useAuth = () => useContext(AuthContext)
@@ -86,9 +86,9 @@ export const makeAuthContextProvider = (authServiceProvider: AuthService) => {
           setIsLoading(true)
           return authServiceProvider.signIn(provider)
         },
-        signOut: authServiceProvider.signOut
+        signOut: authServiceProvider.signOut,
       }),
-      [isLoading, user]
+      [isLoading, user],
     )
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

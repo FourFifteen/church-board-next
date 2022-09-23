@@ -12,10 +12,12 @@ import {
   TagLeftIcon,
 } from "@chakra-ui/react"
 import React, { useRef, useState } from "react"
-import { Need, User, UserID } from "../types"
+import { Need, User, UserID } from "../../../types"
+import { replaceBrutal } from "../../../utils/replaceBrutal"
 
-interface NeedDetailProps {
+export interface NeedDetailProps {
   activeNeed: Need | null
+  boxShadow?: string
   handleCloseDetail: () => void
   saveActiveNeed: (newNeedValues: Need) => void
   userId: UserID
@@ -30,7 +32,8 @@ const FULFILLED_STATES: Need["fulfilledState"][] = [
   "N/A",
 ]
 
-const NeedDetail: React.FC<NeedDetailProps> = ({
+export const NeedDetail: React.FC<NeedDetailProps> = ({
+  boxShadow,
   userId,
   activeNeed,
   saveActiveNeed,
@@ -70,7 +73,7 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
     if (IN_VIEW_ONLY_MODE) {
       return existingState
     } else if (IN_EDIT_MODE && isAssigneeOnlyState) {
-      // if the owner is changing the fullfilledState,
+      // if the owner is changing the fulfilledState,
       // and the Need is assigned,
       // then we mark the need as no longer needed.
       return "N/A"
@@ -103,11 +106,15 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
 
   // TODO: Turn this so that the Tags are updated with the Assignee's name and picture?
   return (
-    <Modal isOpen={Boolean(activeNeed)} onClose={handleCloseDetail}>
+    <Modal
+      isOpen={Boolean(activeNeed)}
+      onClose={handleCloseDetail}
+      colorScheme="teal"
+    >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent boxShadow={boxShadow || "brutal-teal"}>
         <ModalHeader>{name}</ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton colorScheme="teal" />
         <ModalBody>
           <Tag
             onClick={handleFulfilledStateClick}
@@ -120,7 +127,7 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
 
         <ModalFooter>
           <Button
-            colorScheme="blue"
+            colorScheme={replaceBrutal(boxShadow) || "teal"}
             mr={3}
             onClick={handleSaveClick(handleCloseDetail)}
           >
@@ -131,5 +138,3 @@ const NeedDetail: React.FC<NeedDetailProps> = ({
     </Modal>
   )
 }
-
-export default NeedDetail

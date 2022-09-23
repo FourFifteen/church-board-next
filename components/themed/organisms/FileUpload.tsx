@@ -24,7 +24,7 @@ interface FileUploadProps {
   setValue: (value: File[]) => void
 }
 
-const FileUpload = (props: FileUploadProps) => {
+export const FileUpload = (props: FileUploadProps) => {
   const {
     accept = {
       "image/*": [".png", ".gif", ".jpeg", ".jpg"],
@@ -104,8 +104,6 @@ const FileUpload = (props: FileUploadProps) => {
     </Box>
   )
 }
-
-export default FileUpload
 
 type FileInfoProps = {
   id: string

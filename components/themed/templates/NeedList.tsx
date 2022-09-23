@@ -1,15 +1,12 @@
-import {
-  Box,
-  Button,
-  List,
-  Text
-} from "@chakra-ui/react"
+import { Button, List, Stack, Text } from "@chakra-ui/react"
 import React from "react"
-import type { DBServiceList } from "../adapters/firebase-database"
-import { Need, NEED_MODAL_DISPLAY_STATES } from "../types"
-import NeedListItem from "./NeedListItem"
+import type { DBServiceList } from "../../../adapters/firebase-database"
+import { Need, NEED_MODAL_DISPLAY_STATES } from "../../../types"
+import { NeedListItem, NeedListItemProps } from "../organisms"
 
 type NeedListProps = {
+  activeNeed: Need | null
+  handleSaveActiveNeed: NeedListItemProps["handleSaveActiveNeed"]
   listSnapshots: DBServiceList
   updatedNeedErrorMessage: string
   updatedNeedConfirmMessage: string
@@ -17,12 +14,16 @@ type NeedListProps = {
   setShowModal: React.Dispatch<React.SetStateAction<NEED_MODAL_DISPLAY_STATES>>
 }
 
-const NeedList: React.FC<NeedListProps> = ({
+const NEEDS_LIST_COLORS = ["teal", "pink", "purple", "orange"]
+
+export const NeedList: React.FC<NeedListProps> = ({
+  activeNeed,
+  handleSaveActiveNeed,
   listSnapshots,
   setActiveNeed,
   setShowModal,
   updatedNeedConfirmMessage,
-  updatedNeedErrorMessage
+  updatedNeedErrorMessage,
 }) => {
   const [snapshots, loading] = listSnapshots
 
@@ -37,7 +38,7 @@ const NeedList: React.FC<NeedListProps> = ({
   }
 
   return (
-    <Box>
+    <Stack spacing={6}>
       {/* We are: -Loading, -Have no valid db reference, -Have a valid reference with no data */}
       {(!snapshots || (snapshots && !snapshots.length)) &&
         !loading &&
@@ -47,18 +48,13 @@ const NeedList: React.FC<NeedListProps> = ({
       {snapshots && snapshots.length && (
         <>
           {renderAddState()}
-          <List>
-            {snapshots.map((snapshot) => {
+          <Stack direction={["column", "row"]} spacing={[6, 12]} as={List}>
+            {snapshots.map((snapshot, index) => {
               if (!snapshot || !snapshot.key) {
                 return null
               }
-              const {
-                name,
-                description,
-                fulfilledState,
-                ownerId,
-                assigneeId,
-              } = snapshot.val()
+              const { name, description, fulfilledState, ownerId, assigneeId } =
+                snapshot.val()
               const key = snapshot.key
               const need: Need = {
                 name,
@@ -71,21 +67,24 @@ const NeedList: React.FC<NeedListProps> = ({
               return (
                 <NeedListItem
                   key={key}
+                  boxShadow={
+                    "brutal-" +
+                    NEEDS_LIST_COLORS[index % NEEDS_LIST_COLORS.length]
+                  }
+                  handleSaveActiveNeed={handleSaveActiveNeed}
                   need={need}
+                  activeNeed={activeNeed}
                   setActiveNeed={setActiveNeed}
                   setShowModal={setShowModal}
                   updatedNeedErrorMessage={updatedNeedErrorMessage}
                   updatedNeedConfirmMessage={updatedNeedConfirmMessage}
+                  maxW="50%"
                 />
               )
             })}
-          </List>
+          </Stack>
         </>
       )}
-    </Box>
+    </Stack>
   )
 }
-
-export default NeedList
-
-

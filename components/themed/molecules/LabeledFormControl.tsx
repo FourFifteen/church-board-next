@@ -6,7 +6,8 @@ type LabeledFormControlProps = {
   error?: string
   name: string
 }
-const LabeledFormControl = ({
+
+export const LabeledFormControl = ({
   children,
   error,
   label,
@@ -18,5 +19,3 @@ const LabeledFormControl = ({
     {error && <FormErrorMessage>{error}</FormErrorMessage>}
   </FormControl>
 )
-
-export default LabeledFormControl
